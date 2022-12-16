@@ -1,7 +1,5 @@
 ﻿using EasyMicroservice.FileManager.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace EasyMicroservice.FileManager.Models
 {
@@ -12,7 +10,7 @@ namespace EasyMicroservice.FileManager.Models
             Provider = provider;
         }
 
-        IDirectoryManagerProvider Provider { get; set; }
+        internal IDirectoryManagerProvider Provider { get; set; }
 
         public string Name { get; set; }
         public string DirectoryPath { get; set; }

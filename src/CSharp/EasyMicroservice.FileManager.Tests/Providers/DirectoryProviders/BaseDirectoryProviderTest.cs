@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace EasyMicroservice.FileManager.Tests.Providers
+namespace EasyMicroservice.FileManager.Tests.Providers.DirectoryProviders
 {
     public abstract class BaseDirectoryProviderTest
     {
-        IDirectoryManagerProvider _directoryManagerProvider;
+        readonly IDirectoryManagerProvider _directoryManagerProvider;
         public BaseDirectoryProviderTest(IDirectoryManagerProvider directoryManagerProvider)
         {
             _directoryManagerProvider = directoryManagerProvider;
@@ -17,6 +17,8 @@ namespace EasyMicroservice.FileManager.Tests.Providers
         [InlineData("Mahdi")]
         public async Task CreateDirectory(string name)
         {
+            if (await _directoryManagerProvider.IsExistDirectoryAsync(name))
+                Assert.True(await _directoryManagerProvider.DeleteDirectoryAsync(name, true));
             Assert.False(await _directoryManagerProvider.IsExistDirectoryAsync(name));
             await _directoryManagerProvider.CreateDirectoryAsync(name);
             Assert.True(await _directoryManagerProvider.IsExistDirectoryAsync(name));

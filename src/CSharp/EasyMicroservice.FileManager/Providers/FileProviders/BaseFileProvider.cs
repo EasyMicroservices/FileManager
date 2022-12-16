@@ -64,11 +64,27 @@ namespace EasyMicroservice.FileManager.Providers.FileProviders
 
         public virtual Task<FileDetail> GetFileAsync(string path)
         {
-            return Task.FromResult(new FileDetail(this)
+            path = NormalizePath(path);
+            var details = new FileDetail(this)
             {
                 DirectoryPath = PathProvider.GetObjectParentPath(path),
                 Name = PathProvider.GetObjectName(path),
-            });
+            };
+            return Task.FromResult(details);
+        }
+
+        public async Task<DirectoryDetail> CreateDirectoryIfNotExist(FileDetail file)
+        {
+            var directory = await DirectoryManagerProvider.GetDirectoryAsync(file.DirectoryPath);
+            if (!await directory.IsExistAsync())
+                return await directory.CreateDirectory();
+            return directory;
+        }
+
+        public virtual async Task WriteStreamToFileAsync(string path, Stream stream)
+        {
+            using var streamToWrite = await OpenFileAsync(path);
+            await CopyToStreamAsync(stream, stream.Length, streamToWrite);
         }
 
         public abstract Task<FileDetail> CreateFileAsync(string path);

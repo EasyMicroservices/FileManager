@@ -12,6 +12,7 @@ namespace EasyMicroservice.FileManager.Interfaces
         Task<FileDetail> GetFileAsync(string path);
         Task<FileDetail> CreateFileAsync(string path);
         Task<Stream> OpenFileAsync(string path);
+        Task WriteStreamToFileAsync(string path, Stream stream);
         Task<bool> IsExistFileAsync(string path);
         Task<bool> DeleteFileAsync(string path);
         Task TruncateFileAsync(string path);

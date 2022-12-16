@@ -11,6 +11,7 @@
     <PackageTags>file,filemanager,disk,memory,s3,storage</PackageTags>
     <PackageProjectUrl>https://github.com/Easy-Microservise/FileManager</PackageProjectUrl>
     <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   
 </Project>

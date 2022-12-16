@@ -1,12 +1,12 @@
-﻿namespace EasyMicroservice.FileManager.Providers.FileProviders
-{
-    using EasyMicroservice.FileManager.Interfaces;
-    using EasyMicroservice.FileManager.Models;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
+﻿using EasyMicroservice.FileManager.Interfaces;
+using EasyMicroservice.FileManager.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
+namespace EasyMicroservice.FileManager.Providers.FileProviders
+{
     public class MemoryFileProvider : BaseFileProvider
     {
         public MemoryFileProvider(IDirectoryManagerProvider directoryManagerProvider) : base(directoryManagerProvider)
@@ -15,17 +15,13 @@
 
         Dictionary<string, Stream> Files = new Dictionary<string, Stream>();
 
-        public override Task<FileDetail> CreateFileAsync(string path)
+        public override async Task<FileDetail> CreateFileAsync(string path)
         {
-            string directory = Path.GetDirectoryName(NormalizePath(path));
-            var file = new FileDetail(this)
-            {
-                DirectoryPath = directory,
-                Name = Path.GetFileName(path),
-            };
+            var file = await GetFileAsync(NormalizePath(path));
+            await CreateDirectoryIfNotExist(file);
             if (!Files.ContainsKey(file.FullPath))
                 Files.Add(file.FullPath, new MemoryStream());
-            return Task.FromResult(file);
+            return file;
         }
 
         public override Task<bool> DeleteFileAsync(string path)
@@ -39,6 +35,28 @@
         {
             path = NormalizePath(path);
             return Task.FromResult(Files.ContainsKey(path));
+        }
+
+        public override async Task<FileDetail> GetFileAsync(string path)
+        {
+            var file = await base.GetFileAsync(path);
+            if (await file.IsExistAsync())
+            {
+                if (Files.TryGetValue(file.FullPath, out Stream fileStream))
+                {
+                    file.Length = fileStream.Length;
+                }
+            }
+            return file;
+        }
+
+        public override async Task WriteStreamToFileAsync(string path, Stream stream)
+        {
+            path = NormalizePath(path);
+            if (Files.TryGetValue(path, out Stream fileStream))
+            {
+                await CopyToStreamAsync(stream, stream.Length, fileStream);
+            }
         }
 
         public override async Task<Stream> OpenFileAsync(string path)

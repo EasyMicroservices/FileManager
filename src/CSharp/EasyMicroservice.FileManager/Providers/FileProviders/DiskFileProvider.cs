@@ -11,16 +11,23 @@ namespace EasyMicroservice.FileManager.Providers.FileProviders
         {
         }
 
-        public override Task<FileDetail> CreateFileAsync(string path)
+        public override async Task<FileDetail> CreateFileAsync(string path)
         {
-            string directory = Path.GetDirectoryName(NormalizePath(path));
-            var file = new FileDetail(this)
-            {
-                DirectoryPath = directory,
-                Name = Path.GetFileName(path),
-            };
+            var file = await GetFileAsync(NormalizePath(path));
+            await CreateDirectoryIfNotExist(file);
             File.Create(file.FullPath).Dispose();
-            return Task.FromResult(file);
+            return file;
+        }
+
+        public override async Task<FileDetail> GetFileAsync(string path)
+        {
+            var file = await base.GetFileAsync(path);
+            if (await file.IsExistAsync())
+            {
+                var fileInfo = new FileInfo(file.FullPath);
+                file.Length = fileInfo.Length;
+            }
+            return file;
         }
 
         public override Task<bool> DeleteFileAsync(string path)
@@ -45,7 +52,7 @@ namespace EasyMicroservice.FileManager.Providers.FileProviders
         public override async Task TruncateFileAsync(string path)
         {
             path = NormalizePath(path);
-            var fileStream = await OpenFileAsync(path);
+            using var fileStream = await OpenFileAsync(path);
             fileStream.SetLength(0);
         }
     }

@@ -9,10 +9,11 @@ namespace EasyMicroservice.FileManager.Models
             Provider = provider;
         }
 
-        IFileManagerProvider Provider { get; set; }
+        internal IFileManagerProvider Provider { get; set; }
 
         public string Name { get; set; }
         public string DirectoryPath { get; set; }
+        public long Length { get; set; }
         public string FullPath
         {
             get
