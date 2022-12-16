@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net45</TargetFrameworks>
+    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Authors>Ali Yousefi Telori, Mahdi Delzende</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.0.1</Version>
+    <Description>Manage your files with a wrapper in everywhere.</Description>
+    <Copyright>EasyMicroservice@gmail.com</Copyright>
+    <PackageTags>file,filemanager,disk,memory,s3,storage</PackageTags>
+    <PackageProjectUrl>https://github.com/Easy-Microservise/FileManager</PackageProjectUrl>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  
+</Project>
