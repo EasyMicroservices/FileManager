@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/Easy-Microservise/FileManager</PackageProjectUrl>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\EasyMicroservice.FileManager.xml</DocumentationFile>
   </PropertyGroup>
   
 </Project>
