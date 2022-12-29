@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace EasyMicroservice.FileManager
+namespace EasyMicroservice.FileManager.Extensions
 {
     /// <summary>
     /// Extensions of file for easy of use

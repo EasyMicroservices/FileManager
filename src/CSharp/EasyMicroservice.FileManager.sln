@@ -5,13 +5,9 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservice.FileManager", "EasyMicroservice.FileManager\EasyMicroservice.FileManager.csproj", "{FE49E974-079F-4B1F-8DE9-8DFFDB7DBD75}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{1275E0F1-4EA5-4BC0-AE72-E03D4440675E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1275E0F1-4EA5-4BC0-AE72-E03D4440675E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application-Layer", "Application-Layer", "{EC89DCF5-1415-4D01-A5CC-2FE0A26CD941}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test-Layer", "Test-Layer", "{D526C14B-AB65-4441-9ADB-B423411D435F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservice.FileManager.Tests", "EasyMicroservice.FileManager.Tests\EasyMicroservice.FileManager.Tests.csproj", "{A6241393-3744-4DB8-BDD8-F61FDB0B0908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservice.FileManager.Tests", "EasyMicroservice.FileManager.Tests\EasyMicroservice.FileManager.Tests.csproj", "{A6241393-3744-4DB8-BDD8-F61FDB0B0908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,10 +48,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{FE49E974-079F-4B1F-8DE9-8DFFDB7DBD75} = {EC89DCF5-1415-4D01-A5CC-2FE0A26CD941}
-		{EC89DCF5-1415-4D01-A5CC-2FE0A26CD941} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
-		{D526C14B-AB65-4441-9ADB-B423411D435F} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
-		{A6241393-3744-4DB8-BDD8-F61FDB0B0908} = {D526C14B-AB65-4441-9ADB-B423411D435F}
+		{FE49E974-079F-4B1F-8DE9-8DFFDB7DBD75} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
+		{A6241393-3744-4DB8-BDD8-F61FDB0B0908} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3576EC59-EC07-40DF-9149-1C659A5464C3}

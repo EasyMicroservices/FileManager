@@ -1,4 +1,5 @@
-﻿using EasyMicroservice.FileManager.Interfaces;
+﻿using EasyMicroservice.FileManager.Extensions;
+using EasyMicroservice.FileManager.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;

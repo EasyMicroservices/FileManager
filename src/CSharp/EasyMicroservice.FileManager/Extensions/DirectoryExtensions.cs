@@ -1,7 +1,7 @@
 ﻿using EasyMicroservice.FileManager.Models;
 using System.Threading.Tasks;
 
-namespace EasyMicroservice.FileManager
+namespace EasyMicroservice.FileManager.Extensions
 {
     /// <summary>
     /// Extensions of directory to easy of use
