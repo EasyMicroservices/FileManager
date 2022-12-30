@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EasyMicroservice.FileManager\EasyMicroservices.FileManager.csproj" />
-    <ProjectReference Include="..\EasyMicroservices.AmazonS3.Storage\EasyMicroservices.AmazonS3.Storage.csproj" />
+    <ProjectReference Include="..\EasyMicroservices.AmazonS3.Storage\EasyMicroservices.FileManager.AmazonS3.Storage.csproj" />
     <ProjectReference Include="..\EasyMicroservices.FileManager\EasyMicroservices.FileManager.csproj" />
   </ItemGroup>
 
