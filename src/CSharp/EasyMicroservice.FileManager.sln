@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1275E0F1-4EA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservice.FileManager.Tests", "EasyMicroservice.FileManager.Tests\EasyMicroservice.FileManager.Tests.csproj", "{A6241393-3744-4DB8-BDD8-F61FDB0B0908}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservice.AmazonS3.Storage", "EasyMicroservice.AmazonS3.Storage\EasyMicroservice.AmazonS3.Storage.csproj", "{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{A6241393-3744-4DB8-BDD8-F61FDB0B0908}.Release|x64.Build.0 = Release|Any CPU
 		{A6241393-3744-4DB8-BDD8-F61FDB0B0908}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6241393-3744-4DB8-BDD8-F61FDB0B0908}.Release|x86.Build.0 = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|x64.Build.0 = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|x64.ActiveCfg = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|x64.Build.0 = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA97DEEE-5758-4343-A7CD-B317E4FE8E89}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
