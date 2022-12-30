@@ -5,7 +5,7 @@ using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
 using System.Threading.Tasks;
 
-namespace EasyMicroservices.FileManager.AmazonS3.Storage.Providers
+namespace EasyMicroservices.FileManager.AmazonS3.Providers
 {
     /// <summary>
     /// Working with AWS S3 storage

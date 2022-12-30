@@ -11,7 +11,7 @@
 		<PackageProjectUrl>https://github.com/Easy-Microservise/FileManager</PackageProjectUrl>
 		<LangVersion>latest</LangVersion>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-		<DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\EasyMicroservices.FileManager.AmazonS3.Storage.xml</DocumentationFile>
+		<DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\EasyMicroservices.FileManager.AmazonS3.xml</DocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
