@@ -1,10 +1,7 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
-using System;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace EasyMicroservice.AmazonS3.Storage.Providers
 {
@@ -88,6 +85,6 @@ namespace EasyMicroservice.AmazonS3.Storage.Providers
         public async Task<ListBucketsResponse> GetList()
         {
             return await _client.ListBucketsAsync();
-        }
+        }      
     }
 }
