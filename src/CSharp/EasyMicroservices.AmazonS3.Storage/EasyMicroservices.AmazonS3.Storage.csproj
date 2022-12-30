@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0;net45</TargetFrameworks>
+		<Authors>EasyMicroservices</Authors>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Version>0.0.0.1</Version>
+		<Description>Manage your files with a wrapper in everywhere.</Description>
+		<Copyright>EasyMicroservice@gmail.com</Copyright>
+		<PackageTags>s3,storage</PackageTags>
+		<PackageProjectUrl>https://github.com/Easy-Microservise/FileManager</PackageProjectUrl>
+		<LangVersion>latest</LangVersion>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<DocumentationFile>.\bin\$(Configuration)\$(TargetFramework)\EasyMicroservice.AmazonS3.Storage.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AWSSDK.S3" Version="3.7.101.44" />
+	</ItemGroup>
+</Project>
