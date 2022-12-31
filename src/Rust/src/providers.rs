@@ -9,6 +9,7 @@ pub trait PathProvider {
 
 #[async_trait]
 pub trait DirectoryManager {
+    fn path_provider(&self) -> &dyn PathProvider;
     async fn create_dir(&self, path: &str) -> Result<bool>;
     async fn get_dir(&self, path: &str) -> Result<bool>;
     async fn is_dir_exists(&self, path: &str) -> Result<bool>;
@@ -17,6 +18,8 @@ pub trait DirectoryManager {
 
 #[async_trait]
 pub trait FileManager {
+    fn path_provider(&self) -> &dyn PathProvider;
+    fn dir_manager(&self) -> &dyn DirectoryManager;
     async fn get_file(&self, path: &str) -> Result<bool>;
     async fn create_file(&self, path: &str) -> Result<bool>;
     async fn is_file_exists(&self, path: &str) -> Result<bool>;
