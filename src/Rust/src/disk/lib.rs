@@ -1,9 +1,9 @@
 use std::path;
 
-use anyhow::{anyhow, bail};
+use anyhow::bail;
 use async_trait::async_trait;
 
-use crate::{DirectoryManager, FileManager};
+use crate::{DirectoryDetail, DirectoryManager, FileDetail, FileManager};
 use crate::providers::PathProvider;
 
 pub struct DiskFileManager {}
@@ -18,11 +18,11 @@ impl FileManager for DiskFileManager {
         todo!()
     }
 
-    async fn get_file(&self, path: &str) -> anyhow::Result<bool> {
+    async fn get_file(&self, path: &str) -> anyhow::Result<FileDetail> {
         todo!()
     }
 
-    async fn create_file(&self, path: &str) -> anyhow::Result<bool> {
+    async fn create_file(&self, path: &str) -> anyhow::Result<FileDetail> {
         todo!()
     }
 
@@ -43,11 +43,11 @@ impl DirectoryManager for DiskDirectoryManager {
         todo!()
     }
 
-    async fn create_dir(&self, path: &str) -> anyhow::Result<bool> {
+    async fn create_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
         todo!()
     }
 
-    async fn get_dir(&self, path: &str) -> anyhow::Result<bool> {
+    async fn get_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
         todo!()
     }
 
