@@ -72,7 +72,7 @@ impl PathProvider for SystemPathProvider {
 
         match buf.to_str() {
             Some(v) => Ok(v.to_string()),
-            None => bail!("empty paths"),
+            None => bail!("empty or invalid paths"),
         }
     }
 
@@ -85,7 +85,7 @@ impl PathProvider for SystemPathProvider {
             }
         }
 
-        bail!("empty paths")
+        bail!("invalid path: {}", path)
     }
 
     fn get_object_parent_path(&self, path: &str) -> anyhow::Result<String> {
@@ -97,6 +97,6 @@ impl PathProvider for SystemPathProvider {
             }
         }
 
-        bail!("empty paths")
+        bail!("invalid path: {}", path)
     }
 }
