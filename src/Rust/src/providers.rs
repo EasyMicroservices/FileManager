@@ -2,9 +2,9 @@ use anyhow::Result;
 use async_trait::async_trait;
 
 pub trait PathProvider {
-    fn combine(&self, paths: Vec<&str>) -> Result<&str>;
-    fn get_object_name(&self, path: &str) -> Result<&str>;
-    fn get_object_parent_path(&self, path: &str) -> Result<&str>;
+    fn combine(&self, paths: Vec<&str>) -> Result<String>;
+    fn get_object_name(&self, path: &str) -> Result<String>;
+    fn get_object_parent_path(&self, path: &str) -> Result<String>;
 }
 
 #[async_trait]

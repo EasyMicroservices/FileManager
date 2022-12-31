@@ -18,7 +18,7 @@ impl FileDetail<'_> {
         }
     }
 
-    pub fn full_path(&self) -> Result<&str> {
+    pub fn full_path(&self) -> Result<String> {
         self.file_manager.path_provider().combine(
             vec![self.name, self.path]
         )
@@ -40,7 +40,7 @@ impl DirectoryDetail<'_> {
         }
     }
 
-    pub fn full_path(&self) -> Result<&str> {
+    pub fn full_path(&self) -> Result<String> {
         self.dir_manager.path_provider().combine(
             vec![self.name, self.path]
         )
