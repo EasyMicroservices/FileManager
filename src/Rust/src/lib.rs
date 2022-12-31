@@ -1,9 +1,12 @@
-pub mod providers;
-pub mod models;
+use anyhow::Result;
 
 use providers::DirectoryManager;
-use anyhow::Result;
+
 use crate::providers::FileManager;
+
+pub mod providers;
+pub mod models;
+pub mod disk;
 
 pub async fn create_dir(path: &str, dir_manager: &dyn DirectoryManager) -> Result<bool> {
     dir_manager.create_dir(path).await
