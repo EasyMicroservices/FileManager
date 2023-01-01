@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservices.FileManag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMicroservices.FileManager.AmazonS3", "EasyMicroservices.FileManager.AmazonS3\EasyMicroservices.FileManager.AmazonS3.csproj", "{6FC00559-FF92-4504-9BF4-593A7F84CBA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.AzureStorageBlobs", "EasyMicroservices.FileManager.AzureStorageBlobs\EasyMicroservices.FileManager.AzureStorageBlobs.csproj", "{14192A80-3201-4160-A34B-BDD2888A85BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.AzureStorageBlobs.Tests", "EasyMicroservices.FileManager.AzureStorageBlobs.Tests\EasyMicroservices.FileManager.AzureStorageBlobs.Tests.csproj", "{F18C35B7-8165-41CE-BC24-5E12A2870D54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,30 @@ Global
 		{6FC00559-FF92-4504-9BF4-593A7F84CBA7}.Release|x64.Build.0 = Release|Any CPU
 		{6FC00559-FF92-4504-9BF4-593A7F84CBA7}.Release|x86.ActiveCfg = Release|Any CPU
 		{6FC00559-FF92-4504-9BF4-593A7F84CBA7}.Release|x86.Build.0 = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|x64.Build.0 = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Debug|x86.Build.0 = Debug|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|x64.ActiveCfg = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|x64.Build.0 = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|x86.ActiveCfg = Release|Any CPU
+		{14192A80-3201-4160-A34B-BDD2888A85BD}.Release|x86.Build.0 = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|x64.Build.0 = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Debug|x86.Build.0 = Debug|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|x64.ActiveCfg = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|x64.Build.0 = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|x86.ActiveCfg = Release|Any CPU
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +93,8 @@ Global
 		{7283E2B4-3D69-4452-B8CD-B613091DA093} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
 		{E6EA90C8-E246-4E7B-AC30-F486627F54C3} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
 		{6FC00559-FF92-4504-9BF4-593A7F84CBA7} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
+		{14192A80-3201-4160-A34B-BDD2888A85BD} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
+		{F18C35B7-8165-41CE-BC24-5E12A2870D54} = {1275E0F1-4EA5-4BC0-AE72-E03D4440675E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3576EC59-EC07-40DF-9149-1C659A5464C3}
