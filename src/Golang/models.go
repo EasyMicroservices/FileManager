@@ -8,7 +8,7 @@ type FileDetail struct {
 }
 
 func (f *FileDetail) FullPath() (string, error) {
-	return f.fileManager.getPathProvider().combine(
+	return f.fileManager.GetPathProvider().Combine(
 		f.Path, f.Name,
 	)
 }
@@ -20,7 +20,7 @@ type DirectoryDetail struct {
 }
 
 func (d *DirectoryDetail) FullPath() (string, error) {
-	return d.dirManager.getPathProvider().combine(
+	return d.dirManager.GetPathProvider().Combine(
 		d.Path, d.Name,
 	)
 }

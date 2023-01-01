@@ -1,33 +1,33 @@
 package filemanager
 
 func createDir(path string, manager DirectoryManager) (DirectoryDetail, error) {
-	return manager.createDir(path)
+	return manager.CreateDir(path)
 }
 
 func getDir(path string, manager DirectoryManager) (DirectoryDetail, error) {
-	return manager.getDir(path)
+	return manager.GetDir(path)
 }
 
 func dirExists(path string, manager DirectoryManager) (bool, error) {
-	return manager.dirExists(path)
+	return manager.DirExists(path)
 }
 
 func deleteDir(path string, manager DirectoryManager) error {
-	return manager.deleteDir(path)
+	return manager.DeleteDir(path)
 }
 
 func createFile(path string, manager FileManager) (FileDetail, error) {
-	return manager.createFile(path)
+	return manager.CreateFile(path)
 }
 
 func getFile(path string, manager FileManager) (FileDetail, error) {
-	return manager.getFile(path)
+	return manager.GetFile(path)
 }
 
 func fileExists(path string, manager FileManager) (bool, error) {
-	return manager.fileExists(path)
+	return manager.FileExists(path)
 }
 
 func deleteFile(path string, manager FileManager) error {
-	return manager.deleteFile(path)
+	return manager.DeleteFile(path)
 }
