@@ -24,4 +24,7 @@ jobs:
       - name: Build
         run: dotnet build ./src/CSharp/EasyMicroservices.FileManager.sln --no-restore
       - name: Test
-        run: dotnet test ./src/CSharp/EasyMicroservices.FileManager.sln --no-build --verbosity normal
+        run:  |
+          dotnet test ./src/CSharp/EasyMicroservices.FileManager.sln --no-build --verbosity normal -f netcoreapp3.1
+          dotnet test ./src/CSharp/EasyMicroservices.FileManager.sln --no-build --verbosity normal -f net6.0
+          dotnet test ./src/CSharp/EasyMicroservices.FileManager.sln --no-build --verbosity normal -f net5.0
