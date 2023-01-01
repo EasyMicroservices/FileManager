@@ -1,157 +1,148 @@
+using System.Reflection;
 using Azure;
-using Azure.Core;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using EasyMicroservices.FileManager.AzureStorageBlobs.Interfaces;
-using EasyMicroservices.FileManager.AzureStorageBlobs.Models;
 using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace EasyMicroservices.FileManager.AzureStorageBlobs.Providers;
 
-public class AzureStorageBlobsProvider :IAzureStorageBlobs
+public class AzureStorageBlobsProvider : IFileManagerProvider
 {
     private readonly BlobContainerClient _container;
-     
+
     public AzureStorageBlobsProvider(BlobContainerClient container)
     {
         _container = container;
     }
+
     /// <summary>
     /// 
     /// </summary>
     /// <param name="storageConnectionString"></param>
     /// <param name="storageContainerName"></param>
-    public AzureStorageBlobsProvider(string storageConnectionString , string storageContainerName)
+    public AzureStorageBlobsProvider(string storageConnectionString, string storageContainerName)
     {
         _container = new BlobContainerClient(storageConnectionString, storageContainerName);
     }
 
+   
+    public IDirectoryManagerProvider DirectoryManagerProvider { get; set; }
 
-    public async Task<ResponseDetail> UploadAsync(IFormFile file)
+    public IPathProvider PathProvider
     {
-        ResponseDetail responseDetail = new ResponseDetail();
-        try
+        get => throw new System.NotImplementedException();
+        set => throw new System.NotImplementedException();
+    }
+
+    public Task<FileDetail> GetFileAsync(string path)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">Path is FileName for creating</param>
+    /// <returns></returns>
+    public async Task<FileDetail> CreateFileAsync(string path)
+    {
+        BlobClient client = _container.GetBlobClient(path);
+        var response = await client.UploadAsync(Stream.Null);
+
+        var objectBlob = new FileDetail(this);
+        foreach (PropertyInfo prop in response.GetType().GetProperties())
         {
-            BlobClient client = _container.GetBlobClient(file.FileName);
-
-            await using (Stream? stream = file.OpenReadStream())
-            {
-                await client.UploadAsync(stream);
-            }
-
-            responseDetail.Error = false;
-            responseDetail.Status = $"File {file.FileName} Uploaded SuccessFully in Azure Container";
-            responseDetail.Blob.Uri = client.Uri.AbsoluteUri;
-            responseDetail.Blob.Name = client.Name;
-            responseDetail.Blob.ContentType = file.ContentType;
-
-        }
-        catch (RequestFailedException e) when (e.ErrorCode== BlobErrorCode.BlobAlreadyExists)
-        {
-            responseDetail.Error = true;
-            responseDetail.Status = $"Exception Occured! {file.FileName} is already exists.";
-
-            return responseDetail;
-        }
-        catch (Exception e)
-        {
-            responseDetail.Error = true;
-            responseDetail.Status = $"Exception Occured! {file.FileName}";
-
-            return responseDetail;
+            objectBlob.Name = prop.Name;
+            objectBlob.DirectoryPath = path;
         }
 
-        return responseDetail;
+        return objectBlob;
 
     }
 
-    public async Task<ResponseDetail> DownloadAsync(string fileName)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">Path is FileName for opening</param>
+    /// <returns></returns>
+    public async Task<Stream> OpenFileAsync(string path)
     {
-        ResponseDetail responseDetail = new ResponseDetail();
+        Stream blob = Stream.Null;
+
+        BlobClient client = _container.GetBlobClient(path);
+
+        if (await client.ExistsAsync())
+        {
+            blob = await client.OpenReadAsync();
+        }
+
+        return blob;
+    }
+
+    public async Task WriteStreamToFileAsync(string path, Stream stream)
+    {
+        BlobClient client = _container.GetBlobClient(path);
+
+        await client.UploadAsync(stream);
+
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">Path is FileName for checking out</param>
+    /// <returns></returns>
+    public async Task<bool> IsExistFileAsync(string path)
+    {
+        BlobClient client = _container.GetBlobClient(path);
+        bool exists = await client.ExistsAsync();
+        return exists;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="path">Path is FileName to delete.</param>
+    /// <returns></returns>
+    public async Task<bool> DeleteFileAsync(string path)
+    {
         try
         {
-            BlobClient client = _container.GetBlobClient(fileName);
-
-            if (await client.ExistsAsync())
-            {
-                Stream blob = await client.OpenReadAsync();
-                var data = await client.DownloadContentAsync();
-
-                BlobDetail blobDetail = new BlobDetail()
-                {
-                    Name = fileName,
-                    Content = blob,
-                    ContentType = data.Value.Details.ContentType,
-                };
-                responseDetail = new ResponseDetail()
-                {
-                    Blob = { Name = fileName, Content = blob, ContentType = data.Value.Details.ContentType },
-                    Error = false,
-                    Status = ""
-                };
-                
-
-            }
+            BlobClient client = _container.GetBlobClient(path);
+            await client.DeleteAsync();
         }
         catch (RequestFailedException e) when (e.ErrorCode == BlobErrorCode.BlobNotFound)
         {
-            responseDetail = new ResponseDetail()
-            {
-                Error = true,
-                Status = $@"Exception Occured! {fileName} not found."
-            };
-            return responseDetail;
+            return false;
         }
         catch (Exception e)
         {
-            responseDetail.Error = true;
-            responseDetail.Status = $"Exception Occured! {fileName}";
-
-            return responseDetail;
+            return false;
         }
-        return responseDetail;
+
+        return true;
     }
 
-    public async Task<ResponseDetail> DeleteAsync(string fileName)
+    public Task TruncateFileAsync(string path)
     {
-        ResponseDetail responseDetail = new ResponseDetail();
-        try
-        {
-            BlobClient client = _container.GetBlobClient(fileName);
-         await   client.DeleteAsync();
-        }
-        catch (RequestFailedException e) when (e.ErrorCode == BlobErrorCode.BlobNotFound)
-        {
-            responseDetail.Error = true;
-            responseDetail.Status = $@"Exception Occured! {fileName} not found.";
-
-            return responseDetail;
-        }
-        catch (Exception e)
-        {
-            responseDetail.Error = true;
-            responseDetail.Status = $"Exception Occured! {fileName}";
-
-            return responseDetail;
-        }
-
-        return responseDetail;
+        BlobClient client = _container.GetBlobClient(path);
+      
+        throw new NotImplementedException();
     }
-
-    public async Task<List<BlobDetail>> GetListAsync()
+    
+    public async Task<List<FileDetail>> GetListAsync()
     {
-        List<BlobDetail> blobsList = new List<BlobDetail>();
+        List<FileDetail> blobsList = new List<FileDetail>();
         await foreach (BlobItem item in _container.GetBlobsAsync())
         {
             string name = item.Name;
             string uri = $"{_container.Uri.ToString()}/{name}";
-            blobsList.Add(new BlobDetail()
+            blobsList.Add(new FileDetail(this)
             {
                 Name = name,
-                ContentType = item.Properties.ContentType,
-                Uri = uri
+                Length = item.Properties.ContentLength??0,
+                DirectoryPath = uri
             });
         }
 
