@@ -2,6 +2,8 @@ package disk
 
 import (
 	"fmt"
+	fm "github.com/EasyMicroservices/FileManager"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -51,5 +53,100 @@ func (s *SystemPathProvider) GetObjectParentPath(path string) (string, error) {
 	}
 
 	return "", fmt.Errorf("invalid path: %v", path)
+}
 
+type DiskFileManager struct {
+	pathProvider fm.PathProvider
+	dirManager   fm.DirectoryManager
+}
+
+func InitDiskFileManager(pathProvider fm.PathProvider, dirManager fm.DirectoryManager) DiskFileManager {
+	return DiskFileManager{
+		pathProvider: pathProvider,
+		dirManager:   dirManager,
+	}
+}
+
+func (d *DiskFileManager) GetPathProvider() fm.PathProvider {
+	return d.pathProvider
+}
+
+func (d *DiskFileManager) GetDirectoryManager() fm.DirectoryManager {
+	return d.dirManager
+}
+
+func (d *DiskFileManager) CreateFile(path string) (*fm.FileDetail, error) {
+	exists, err := d.FileExists(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if exists {
+		return nil, os.ErrExist
+	}
+
+	path, _ = d.GetPathProvider().Combine(path)
+
+	file, err := os.Create(path)
+	if err != nil {
+		return nil, err
+	}
+
+	fd := fm.InitFileDetail(d)
+	fd.Name = file.Name()
+	fd.Length = 0
+	fd.Path, _ = d.GetPathProvider().GetObjectParentPath(path)
+
+	return &fd, nil
+}
+
+func (d *DiskFileManager) GetFile(path string) (*fm.FileDetail, error) {
+	path, err := d.GetPathProvider().Combine(path)
+	if err != nil {
+		return nil, err
+	}
+
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if fileInfo.IsDir() {
+		return nil, os.ErrInvalid
+	}
+
+	fd := fm.InitFileDetail(d)
+	fd.Name = fileInfo.Name()
+	fd.Length = fileInfo.Size()
+	fd.Path, _ = d.GetPathProvider().GetObjectParentPath(path)
+	return &fd, nil
+}
+
+func (d *DiskFileManager) FileExists(path string) (bool, error) {
+	path, err := d.GetPathProvider().Combine(path)
+	if err != nil {
+		return false, err
+	}
+	_, err = os.Stat(path)
+
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (d *DiskFileManager) DeleteFile(path string) error {
+	exists, err := d.FileExists(path)
+
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		return os.ErrNotExist
+	}
+
+	path, _ = d.GetPathProvider().Combine(path)
+
+	return os.RemoveAll(path)
 }

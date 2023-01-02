@@ -8,8 +8,8 @@ type PathProvider interface {
 
 type DirectoryManager interface {
 	GetPathProvider() PathProvider
-	CreateDir(path string) (DirectoryDetail, error)
-	GetDir(path string) (DirectoryDetail, error)
+	CreateDir(path string) (*DirectoryDetail, error)
+	GetDir(path string) (*DirectoryDetail, error)
 	DirExists(path string) (bool, error)
 	DeleteDir(path string) error
 }
@@ -17,8 +17,8 @@ type DirectoryManager interface {
 type FileManager interface {
 	GetPathProvider() PathProvider
 	GetDirectoryManager() DirectoryManager
-	CreateFile(path string) (FileDetail, error)
-	GetFile(path string) (FileDetail, error)
+	CreateFile(path string) (*FileDetail, error)
+	GetFile(path string) (*FileDetail, error)
 	FileExists(path string) (bool, error)
 	DeleteFile(path string) error
 }

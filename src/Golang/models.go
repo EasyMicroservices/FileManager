@@ -7,6 +7,12 @@ type FileDetail struct {
 	Length      int64
 }
 
+func InitFileDetail(fm FileManager) FileDetail {
+	return FileDetail{
+		fileManager: fm,
+	}
+}
+
 func (f *FileDetail) FullPath() (string, error) {
 	return f.fileManager.GetPathProvider().Combine(
 		f.Path, f.Name,
@@ -17,6 +23,12 @@ type DirectoryDetail struct {
 	dirManager DirectoryManager
 	Name       string
 	Path       string
+}
+
+func InitDirectoryManager(dm DirectoryManager) DirectoryDetail {
+	return DirectoryDetail{
+		dirManager: dm,
+	}
 }
 
 func (d *DirectoryDetail) FullPath() (string, error) {
