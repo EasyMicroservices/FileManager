@@ -25,7 +25,7 @@ type DirectoryDetail struct {
 	Path       string
 }
 
-func InitDirectoryManager(dm DirectoryManager) DirectoryDetail {
+func InitDirectoryDetail(dm DirectoryManager) DirectoryDetail {
 	return DirectoryDetail{
 		dirManager: dm,
 	}

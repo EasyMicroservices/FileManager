@@ -87,17 +87,12 @@ func (d *DiskFileManager) CreateFile(path string) (*fm.FileDetail, error) {
 
 	path, _ = d.GetPathProvider().Combine(path)
 
-	file, err := os.Create(path)
+	_, err = os.Create(path)
 	if err != nil {
 		return nil, err
 	}
 
-	fd := fm.InitFileDetail(d)
-	fd.Name = file.Name()
-	fd.Length = 0
-	fd.Path, _ = d.GetPathProvider().GetObjectParentPath(path)
-
-	return &fd, nil
+	return d.GetFile(path)
 }
 
 func (d *DiskFileManager) GetFile(path string) (*fm.FileDetail, error) {
@@ -129,6 +124,10 @@ func (d *DiskFileManager) FileExists(path string) (bool, error) {
 	}
 	_, err = os.Stat(path)
 
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
 	if err != nil {
 		return false, err
 	}
@@ -137,6 +136,92 @@ func (d *DiskFileManager) FileExists(path string) (bool, error) {
 
 func (d *DiskFileManager) DeleteFile(path string) error {
 	exists, err := d.FileExists(path)
+
+	if err != nil {
+		return err
+	}
+
+	if !exists {
+		return os.ErrNotExist
+	}
+
+	path, _ = d.GetPathProvider().Combine(path)
+
+	return os.RemoveAll(path)
+}
+
+type DiskDirectoryManager struct {
+	pathProvider fm.PathProvider
+}
+
+func InitDiskDirectoryManager(pathProvider fm.PathProvider) DiskDirectoryManager {
+	return DiskDirectoryManager{
+		pathProvider: pathProvider,
+	}
+}
+
+func (d DiskDirectoryManager) GetPathProvider() fm.PathProvider {
+	return d.pathProvider
+}
+
+func (d DiskDirectoryManager) CreateDir(path string) (*fm.DirectoryDetail, error) {
+	path, err := d.GetPathProvider().Combine(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = os.Mkdir(path, 0666)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return d.GetDir(path)
+}
+
+func (d DiskDirectoryManager) GetDir(path string) (*fm.DirectoryDetail, error) {
+	path, err := d.GetPathProvider().Combine(path)
+
+	if err != nil {
+		return nil, err
+	}
+	dirInfo, err := os.Stat(path)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !dirInfo.IsDir() {
+		return nil, os.ErrInvalid
+	}
+
+	dd := fm.InitDirectoryDetail(d)
+	dd.Name = dirInfo.Name()
+	dd.Path, _ = d.GetPathProvider().GetObjectParentPath(path)
+
+	return &dd, nil
+}
+
+func (d DiskDirectoryManager) DirExists(path string) (bool, error) {
+	path, err := d.GetPathProvider().Combine(path)
+	if err != nil {
+		return false, err
+	}
+	_, err = os.Stat(path)
+
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (d DiskDirectoryManager) DeleteDir(path string) error {
+	exists, err := d.DirExists(path)
 
 	if err != nil {
 		return err
