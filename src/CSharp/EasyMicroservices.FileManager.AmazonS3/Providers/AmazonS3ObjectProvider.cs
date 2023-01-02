@@ -82,7 +82,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
             DeleteObjectRequest request = new()
             {
                 BucketName = path,
-                Key = _objectName 
+                Key = _objectName
             };
 
             DeleteObjectResponse response = await _client.DeleteObjectAsync(request);
