@@ -171,7 +171,7 @@ func (d DiskDirectoryManager) CreateDir(path string) (*fm.DirectoryDetail, error
 		return nil, err
 	}
 
-	err = os.Mkdir(path, 0666)
+	err = os.Mkdir(path, 0777)
 
 	if err != nil {
 		return nil, err
