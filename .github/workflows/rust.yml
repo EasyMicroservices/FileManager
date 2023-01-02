@@ -12,8 +12,6 @@ on:
 jobs:
   testing:
     runs-on: ubuntu-latest
-    services:
-
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
