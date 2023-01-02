@@ -56,19 +56,17 @@ func (s *SystemPathProvider) GetObjectParentPath(path string) (string, error) {
 }
 
 type DiskFileManager struct {
-	pathProvider fm.PathProvider
-	dirManager   fm.DirectoryManager
+	dirManager fm.DirectoryManager
 }
 
-func InitDiskFileManager(pathProvider fm.PathProvider, dirManager fm.DirectoryManager) DiskFileManager {
+func InitDiskFileManager(dirManager fm.DirectoryManager) DiskFileManager {
 	return DiskFileManager{
-		pathProvider: pathProvider,
-		dirManager:   dirManager,
+		dirManager: dirManager,
 	}
 }
 
 func (d *DiskFileManager) GetPathProvider() fm.PathProvider {
-	return d.pathProvider
+	return d.dirManager.GetPathProvider()
 }
 
 func (d *DiskFileManager) GetDirectoryManager() fm.DirectoryManager {
