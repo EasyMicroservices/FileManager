@@ -35,11 +35,12 @@ jobs:
         uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Generate code coverage
-        run: cd src/Rust ; cargo llvm-cov --lib --all-features --workspace --lcov --output-path ../../lcov.info
+        run: cd src/Rust ; cargo llvm-cov --lib --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
-          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: src/Rust/lcov.info
           fail_ci_if_error: true
 
