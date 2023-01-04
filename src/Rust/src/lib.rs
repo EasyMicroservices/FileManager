@@ -1,13 +1,11 @@
-use anyhow::Result;
-
-use providers::DirectoryManager;
-
-use crate::models::{DirectoryDetail, FileDetail};
-use crate::providers::FileManager;
-
 pub mod providers;
 pub mod models;
 pub mod disk;
+
+use anyhow::Result;
+
+use crate::models::{DirectoryDetail, FileDetail};
+use crate::providers::{FileManager, DirectoryManager};
 
 pub async fn create_dir<'a>(path: &str, dir_manager: &'a dyn DirectoryManager) -> Result<DirectoryDetail<'a>> {
     dir_manager.create_dir(path).await
@@ -21,7 +19,7 @@ pub async fn is_dir_exists(path: &str, dir_manager: &dyn DirectoryManager) -> Re
     dir_manager.is_dir_exists(path).await
 }
 
-pub async fn delete_dir(path: &str, recursive: bool, dir_manager: &dyn DirectoryManager) -> Result<bool> {
+pub async fn delete_dir(path: &str, recursive: bool, dir_manager: &dyn DirectoryManager) -> Result<()> {
     dir_manager.delete_dir(path, recursive).await
 }
 
@@ -37,6 +35,6 @@ pub async fn is_file_exists(path: &str, file_manager: &dyn FileManager) -> Resul
     file_manager.is_file_exists(path).await
 }
 
-pub async fn delete_file(path: &str, file_manager: &dyn FileManager) -> Result<bool> {
+pub async fn delete_file(path: &str, file_manager: &dyn FileManager) -> Result<()> {
     file_manager.delete_file(path).await
 }

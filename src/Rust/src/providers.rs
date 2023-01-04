@@ -10,20 +10,20 @@ pub trait PathProvider {
 }
 
 #[async_trait]
-pub trait DirectoryManager {
+pub trait DirectoryManager: Send + Sync {
     fn path_provider(&self) -> &dyn PathProvider;
     async fn create_dir(&self, path: &str) -> Result<DirectoryDetail>;
     async fn get_dir(&self, path: &str) -> Result<DirectoryDetail>;
     async fn is_dir_exists(&self, path: &str) -> Result<bool>;
-    async fn delete_dir(&self, path: &str, recursive: bool) -> Result<bool>;
+    async fn delete_dir(&self, path: &str, recursive: bool) -> Result<()>;
 }
 
 #[async_trait]
-pub trait FileManager {
+pub trait FileManager: Send + Sync {
     fn path_provider(&self) -> &dyn PathProvider;
     fn dir_manager(&self) -> &dyn DirectoryManager;
     async fn get_file(&self, path: &str) -> Result<FileDetail>;
     async fn create_file(&self, path: &str) -> Result<FileDetail>;
     async fn is_file_exists(&self, path: &str) -> Result<bool>;
-    async fn delete_file(&self, path: &str) -> Result<bool>;
+    async fn delete_file(&self, path: &str) -> Result<()>;
 }
