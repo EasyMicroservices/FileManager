@@ -35,9 +35,21 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
         set => throw new System.NotImplementedException();
     }
 
-    public Task<FileDetail> GetFileAsync(string path)
+    public async Task<FileDetail> GetFileAsync(string path)
     {
-        throw new NotImplementedException();
+        FileDetail file =new FileDetail(this);
+        BlobClient client = _container.GetBlobClient(path);
+        if (await client.ExistsAsync())
+        {
+            file.DirectoryPath = path;
+            file.Name = path;
+            Stream stream =await OpenFileAsync(path);
+            file.Length = stream.Length;
+
+        }
+
+        return file;
+
     }
 
     /// <summary>
@@ -48,12 +60,14 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     public async Task<FileDetail> CreateFileAsync(string path)
     {
         BlobClient client = _container.GetBlobClient(path);
+        if (await IsExistFileAsync(path))
+            await DeleteFileAsync(path);
         var response = await client.UploadAsync(Stream.Null);
 
         var objectBlob = new FileDetail(this);
         foreach (PropertyInfo prop in response.GetType().GetProperties())
         {
-            objectBlob.Name = prop.Name;
+            objectBlob.Name = path;
             objectBlob.DirectoryPath = path;
         }
 
@@ -84,7 +98,7 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     {
         BlobClient client = _container.GetBlobClient(path);
 
-        await client.UploadAsync(stream);
+         await client.UploadAsync(stream ,true);
 
     }
 
