@@ -30,7 +30,6 @@ public class AzureStorageBlobsTest
     {
         
         AzureStorageBlobsProvider azureStorageBlobsProvider = new AzureStorageBlobsProvider(_blobContainerClient);
-
        
         if (await azureStorageBlobsProvider.IsExistFileAsync(path))
             Assert.True(await azureStorageBlobsProvider.DeleteFileAsync(path));
