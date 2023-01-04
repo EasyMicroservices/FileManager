@@ -28,7 +28,6 @@ public class AzureStorageBlobsTest
     [InlineData("CreateFile\\Mahdi.txt")]
     public async Task CreateFile(string path)
     {
-        
         AzureStorageBlobsProvider azureStorageBlobsProvider = new AzureStorageBlobsProvider(_blobContainerClient);
        
         if (await azureStorageBlobsProvider.IsExistFileAsync(path))
