@@ -85,3 +85,18 @@ async fn test_system_path_provider_get_object_parent_path() {
     let res = provider.get_object_parent_path("parent/dir/../");
     assert!(res.is_err());
 }
+
+#[test]
+async fn test_normalize_path() {
+    assert_eq!("parent/dir", normalize_path("parent/dir/.".to_string()));
+
+    assert_eq!("parent", normalize_path("parent/dir/..".to_string()));
+
+    assert_eq!("parent/file", normalize_path("parent/dir/../file".to_string()));
+
+    assert_eq!("parent/dir/file", normalize_path("parent/dir/./file".to_string()));
+    
+    assert_eq!("../parent/dir", normalize_path("../parent/dir".to_string()));
+
+    assert_eq!("./parent/dir", normalize_path("./parent/dir".to_string()));
+}

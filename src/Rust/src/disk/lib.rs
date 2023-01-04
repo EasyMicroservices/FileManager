@@ -156,12 +156,6 @@ fn normalize_path(mut path: String) -> String {
             break;
         }
 
-        let p_len = if path.len() > pos + 2 && path.chars().nth(pos + 2) == Some('/') {
-            3
-        } else {
-            2
-        };
-
         let tmp_path: String = path.chars().take(pos).collect();
         if let Some(parent_pos) = tmp_path.rfind("/") {
             let a: String = tmp_path.chars().take(parent_pos).collect::<String>();
@@ -170,10 +164,10 @@ fn normalize_path(mut path: String) -> String {
             path.push_str(&b);
         }
     }
-    while path.contains("./") {
-        path = path.replace("./", "");
-    }
 
+    while path.contains("/.") {
+        path = path.replace("/.", "");
+    }
 
     if path.is_empty() {
         path += "./"
