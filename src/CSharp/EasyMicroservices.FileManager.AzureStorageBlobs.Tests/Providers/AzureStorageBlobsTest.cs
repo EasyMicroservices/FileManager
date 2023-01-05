@@ -20,7 +20,6 @@ public class AzureStorageBlobsTest
       
     }
 
-
     [Theory]
     [InlineData("Saba.txt")]
     [InlineData("Ali.txt")]
