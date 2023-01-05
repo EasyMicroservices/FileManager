@@ -63,8 +63,8 @@ public class AzureStorageBlobsTest
         yield return new object[] { "Mahdi.txt",GenerateStream( "this is test data for Mahdi.txt") };
         yield return new object[] { "New.txt",GenerateStream( "this is test data for New.txt") };
     }
-    
-    public static Stream GenerateStream(string s)
+
+    private static Stream GenerateStream(string s)
     {
       
         var stream = new MemoryStream();
