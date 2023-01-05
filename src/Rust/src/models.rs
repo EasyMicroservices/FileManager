@@ -6,7 +6,7 @@ pub struct FileDetail<'a> {
     pub file_manager: &'a dyn FileManager,
     pub name: String,
     pub path: String,
-    pub len: i64,
+    pub len: u64,
 }
 
 impl FileDetail<'_> {

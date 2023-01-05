@@ -6,32 +6,77 @@ use tokio::fs;
 use crate::models::{DirectoryDetail, FileDetail};
 use crate::providers::{PathProvider, DirectoryManager, FileManager};
 
-pub struct DiskFileManager {}
+pub struct DiskFileManager<D>
+    where
+        D: DirectoryManager + Send + Sync
+{
+    dir_manager: D,
+}
+
+impl<D> DiskFileManager<D>
+    where
+        D: DirectoryManager + Send + Sync
+{
+    pub fn new(dir_manager: D) -> DiskFileManager<D> {
+        DiskFileManager {
+            dir_manager
+        }
+    }
+}
 
 #[async_trait]
-impl FileManager for DiskFileManager {
+impl<D> FileManager for DiskFileManager<D>
+    where
+        D: DirectoryManager + Send + Sync
+{
     fn path_provider(&self) -> &dyn PathProvider {
-        todo!()
+        self.dir_manager.path_provider()
     }
 
     fn dir_manager(&self) -> &dyn DirectoryManager {
-        todo!()
+        &self.dir_manager
     }
 
     async fn get_file(&self, path: &str) -> anyhow::Result<FileDetail> {
-        todo!()
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = fs::metadata(updated_path.clone()).await?;
+
+        return Ok(FileDetail {
+            file_manager: self,
+            name: self.path_provider().get_object_name(updated_path.as_str())?,
+            path: self.path_provider().get_object_parent_path(updated_path.as_str())?,
+            len: metadata.len(),
+        });
     }
 
     async fn create_file(&self, path: &str) -> anyhow::Result<FileDetail> {
-        todo!()
+        let exists = self.is_file_exists(path).await?;
+        if exists {
+            bail!("file exists: {}", path)
+        }
+
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        fs::File::create(updated_path).await?;
+
+        return self.get_file(path).await;
     }
 
     async fn is_file_exists(&self, path: &str) -> anyhow::Result<bool> {
-        todo!()
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = fs::metadata(updated_path).await?;
+
+        Ok(metadata.is_file())
     }
 
     async fn delete_file(&self, path: &str) -> anyhow::Result<()> {
-        todo!()
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        fs::remove_file(updated_path).await?;
+
+        Ok(())
     }
 }
 
@@ -40,6 +85,17 @@ pub struct DiskDirectoryManager<P>
         P: PathProvider + Send + Sync
 {
     path_provider: P,
+}
+
+impl<P> DiskDirectoryManager<P>
+    where
+        P: PathProvider + Send + Sync
+{
+    pub fn new(path_provider: P) -> DiskDirectoryManager<P> {
+        DiskDirectoryManager {
+            path_provider
+        }
+    }
 }
 
 #[async_trait]
@@ -101,7 +157,7 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
 pub struct SystemPathProvider {}
 
 impl SystemPathProvider {
-    fn new() -> SystemPathProvider {
+    pub fn new() -> SystemPathProvider {
         SystemPathProvider {}
     }
 }
