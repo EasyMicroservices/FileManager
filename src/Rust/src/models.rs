@@ -2,6 +2,7 @@ use anyhow::Result;
 
 use crate::{DirectoryManager, FileManager};
 
+#[derive(Clone, Debug)]
 pub struct FileDetail<'a> {
     pub file_manager: &'a dyn FileManager,
     pub name: String,
@@ -26,7 +27,7 @@ impl FileDetail<'_> {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DirectoryDetail<'a> {
     pub dir_manager: &'a dyn DirectoryManager,
     pub name: String,

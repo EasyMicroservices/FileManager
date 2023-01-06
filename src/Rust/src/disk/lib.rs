@@ -6,6 +6,7 @@ use tokio::fs;
 use crate::models::{DirectoryDetail, FileDetail};
 use crate::providers::{PathProvider, DirectoryManager, FileManager};
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct DiskFileManager<D>
     where
         D: DirectoryManager + Send + Sync
@@ -37,10 +38,14 @@ impl<D> FileManager for DiskFileManager<D>
         &self.dir_manager
     }
 
-    async fn get_file(&self, path: &str) -> anyhow::Result<FileDetail> {
+    async fn get_file_async(&self, path: &str) -> anyhow::Result<FileDetail> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
         let metadata = fs::metadata(updated_path.clone()).await?;
+
+        if !metadata.is_file() {
+            return Err(std::io::Error::from(std::io::ErrorKind::NotFound).into());
+        }
 
         return Ok(FileDetail {
             file_manager: self,
@@ -50,28 +55,38 @@ impl<D> FileManager for DiskFileManager<D>
         });
     }
 
-    async fn create_file(&self, path: &str) -> anyhow::Result<FileDetail> {
-        let exists = self.is_file_exists(path).await?;
+    async fn create_file_async(&self, path: &str) -> anyhow::Result<FileDetail> {
+        let exists = self.is_file_exists_async(path).await?;
         if exists {
-            bail!("file exists: {}", path)
+            return Err(std::io::Error::from(std::io::ErrorKind::AlreadyExists).into());
         }
 
         let updated_path = self.path_provider().combine(vec![path])?;
 
         fs::File::create(updated_path).await?;
 
-        return self.get_file(path).await;
+        return self.get_file_async(path).await;
     }
 
-    async fn is_file_exists(&self, path: &str) -> anyhow::Result<bool> {
+    async fn is_file_exists_async(&self, path: &str) -> anyhow::Result<bool> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
-        let metadata = fs::metadata(updated_path).await?;
+        let metadata = fs::metadata(updated_path).await;
+
+        let metadata = match metadata {
+            Ok(v) => v,
+            Err(e) => {
+                if e.kind() == std::io::ErrorKind::NotFound {
+                    return Ok(false);
+                }
+                return Err(e.into());
+            }
+        };
 
         Ok(metadata.is_file())
     }
 
-    async fn delete_file(&self, path: &str) -> anyhow::Result<()> {
+    async fn delete_file_async(&self, path: &str) -> anyhow::Result<()> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
         fs::remove_file(updated_path).await?;
@@ -80,6 +95,7 @@ impl<D> FileManager for DiskFileManager<D>
     }
 }
 
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct DiskDirectoryManager<P>
     where
         P: PathProvider + Send + Sync
@@ -107,22 +123,21 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
         &self.path_provider
     }
 
-    async fn create_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
+    async fn create_dir_async(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
         fs::create_dir(updated_path).await?;
 
-        self.get_dir(path).await
+        self.get_dir_async(path).await
     }
 
-    async fn get_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
+    async fn get_dir_async(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
         let updated_path = self.path_provider().combine(vec![path])?;
-
 
         let metadata = fs::metadata(updated_path.clone()).await?;
 
         if !metadata.is_dir() {
-            bail!("given path is not a dir: {}", path);
+            return Err(std::io::Error::from(std::io::ErrorKind::AlreadyExists).into());
         }
 
         Ok(DirectoryDetail {
@@ -132,15 +147,25 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
         }.clone())
     }
 
-    async fn is_dir_exists(&self, path: &str) -> anyhow::Result<bool> {
+    async fn is_dir_exists_async(&self, path: &str) -> anyhow::Result<bool> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
-        let metadata = fs::metadata(updated_path).await?;
+        let metadata = fs::metadata(updated_path).await;
+
+        let metadata = match metadata {
+            Ok(v) => v,
+            Err(e) => {
+                if e.kind() == std::io::ErrorKind::NotFound {
+                    return Ok(false);
+                }
+                return Err(e.into());
+            }
+        };
 
         Ok(metadata.is_dir())
     }
 
-    async fn delete_dir(&self, path: &str, recursive: bool) -> anyhow::Result<()> {
+    async fn delete_dir_async(&self, path: &str, recursive: bool) -> anyhow::Result<()> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
         if recursive {
@@ -153,7 +178,7 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct SystemPathProvider {}
 
 impl SystemPathProvider {
@@ -207,9 +232,13 @@ impl PathProvider for SystemPathProvider {
 }
 
 fn normalize_path(mut path: String) -> String {
-    while let Some(pos) = path.find("/..") {
-        if pos == 0 || pos == 1 {
-            break;
+    let mut i: usize = 0;
+    while let Some(pos) = path.chars().skip(i).collect::<String>().find("/..") {
+        if let Some(v) = path.chars().nth(pos + 3) {
+            if v != '/' {
+                i = pos + 1;
+                continue;
+            }
         }
 
         let tmp_path: String = path.chars().take(pos).collect();
@@ -218,11 +247,21 @@ fn normalize_path(mut path: String) -> String {
             let b: String = path.chars().skip(pos + 3).collect::<String>();
             path = a;
             path.push_str(&b);
+        } else {
+            i = pos + 1;
         }
     }
 
-    while path.contains("/.") {
-        path = path.replace("/.", "");
+    i = 0;
+    while let Some(pos) = path.chars().skip(i).collect::<String>().find("/.") {
+        if let Some(v) = path.chars().nth(pos + 2) {
+            if v == '/' {
+                path = path.replace("/.", "");
+            }
+        } else {
+            path = path.replace("/.", "");
+        }
+        i = pos + 1;
     }
 
     if path.is_empty() {
