@@ -59,7 +59,8 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// <param name="path">Path is FileName for creating</param>
     /// <returns></returns>
     public async Task<FileDetail> CreateFileAsync(string path)
-    {
+    {  
+        
         BlobClient client = _container.GetBlobClient(path);
         if (await IsExistFileAsync(path))
             await DeleteFileAsync(path);
