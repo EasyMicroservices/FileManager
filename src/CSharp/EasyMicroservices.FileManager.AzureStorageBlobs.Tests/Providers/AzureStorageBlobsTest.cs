@@ -2,7 +2,6 @@ using Azure.Storage.Blobs;
 using EasyMicroservices.FileManager.AzureStorageBlobs.Providers;
 
 namespace EasyMicroservices.FileManager.AzureStorageBlobs.Tests.Providers;
-
  
 public class AzureStorageBlobsTest 
 {

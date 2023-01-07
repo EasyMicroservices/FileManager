@@ -7,7 +7,6 @@ using EasyMicroservices.FileManager.Models;
 
 namespace EasyMicroservices.FileManager.AzureStorageBlobs.Providers;
 
-
 public class AzureStorageBlobsProvider : IFileManagerProvider
 {
     private readonly BlobContainerClient _container;
