@@ -3,7 +3,7 @@ using EasyMicroservices.FileManager.AzureStorageBlobs.Providers;
 
 namespace EasyMicroservices.FileManager.AzureStorageBlobs.Tests.Providers;
  
-/*public class AzureStorageBlobsTest 
+public class AzureStorageBlobsTest 
 {
     private readonly BlobContainerClient _blobContainerClient ;
 
@@ -72,4 +72,4 @@ namespace EasyMicroservices.FileManager.AzureStorageBlobs.Tests.Providers;
     }
   
 
-}*/
+}
