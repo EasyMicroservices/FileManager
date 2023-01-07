@@ -69,7 +69,6 @@ namespace EasyMicroservices.FileManager.AzureStorageBlobs.Tests.Providers;
         writer.Flush();
         stream.Position = 0;
         return stream;
-    }
-  
+    }  
 
 }*/
