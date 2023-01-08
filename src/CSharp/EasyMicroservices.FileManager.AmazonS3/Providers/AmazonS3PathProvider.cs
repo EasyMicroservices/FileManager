@@ -15,7 +15,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// <returns></returns>
         public override string Combine(params string[] paths)
         {
-             return Path.Combine(paths).Replace("\\", "/").Trim('/');
+            return Path.Combine(paths).Replace("\\", "/").Trim('/');
         }
     }
 }
