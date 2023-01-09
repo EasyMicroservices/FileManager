@@ -1,8 +1,8 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Util;
-using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
+using EasyMicroservices.FileManager.Providers.DirectoryProviders;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.AmazonS3.Providers
@@ -10,25 +10,15 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
     /// <summary>
     /// Working with AWS S3 storage
     /// </summary>
-    public class AmazonS3BucketProvider : IDirectoryManagerProvider
+    public class AmazonS3BucketProvider : BaseDirectoryProvider
     {
-        private readonly IAmazonS3 _client;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Root { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public IPathProvider PathProvider { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-
+        internal readonly IAmazonS3 _client;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="client"></param>
-        public AmazonS3BucketProvider(IAmazonS3 client)
+        /// <param name="bucket"></param>
+        public AmazonS3BucketProvider(IAmazonS3 client, string bucket) : base(bucket, new AmazonS3PathProvider())
         {
             _client = client;
         }
@@ -39,10 +29,11 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// <param name="accessKey">Storage AccessKey</param>
         /// <param name="secretKey">Storage SecretKey</param>
         /// <param name="endpointUrl">Endpoint Url</param>
-        public AmazonS3BucketProvider(string accessKey, string secretKey, string endpointUrl)
+        /// <param name="bucket"></param>
+        public AmazonS3BucketProvider(string accessKey, string secretKey, string endpointUrl, string bucket) : base(bucket, new AmazonS3PathProvider())
         {
             var awsCredentials = new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey);
-            var config = new AmazonS3Config { ServiceURL = endpointUrl };
+            var config = new AmazonS3Config { ServiceURL = endpointUrl, UseAccelerateEndpoint = false, UseHttp = true, ForcePathStyle = true };
             _client = new AmazonS3Client(awsCredentials, config);
         }
 
@@ -52,7 +43,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path">The name of the bucket to create.</param>
         /// <returns>return result message.</returns>
-        public async Task<DirectoryDetail> CreateDirectoryAsync(string path)
+        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path)
         {
             var putBucketRequest = new PutBucketRequest
             {
@@ -72,7 +63,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <returns>The response from the ListingBuckets call that contains a
         /// list of the buckets owned by the default user.</returns>
-        public Task<DirectoryDetail> GetDirectoryAsync(string path)
+        public override Task<DirectoryDetail> GetDirectoryAsync(string path)
         {
             throw new System.NotImplementedException();
         }
@@ -81,7 +72,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path">The name of the bucket to check.</param>
         /// <returns>return true if bucket exists.</returns>
-        public async Task<bool> IsExistDirectoryAsync(string path)
+        public override async Task<bool> IsExistDirectoryAsync(string path)
         {
             return await AmazonS3Util.DoesS3BucketExistV2Async(_client, path);
         }
@@ -90,7 +81,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path">The name of the bucket to be deleted.</param>
         /// <returns>return result message.</returns>
-        public async Task<bool> DeleteDirectoryAsync(string path)
+        public override async Task<bool> DeleteDirectoryAsync(string path)
         {
             var response = await _client.DeleteBucketAsync(path);
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
@@ -109,7 +100,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// <param name="recursive"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public Task<bool> DeleteDirectoryAsync(string path, bool recursive)
+        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive)
         {
             throw new System.NotImplementedException();
         }

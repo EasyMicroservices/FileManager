@@ -8,10 +8,16 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
 {
     public abstract class BaseFileProviderTest
     {
-        IFileManagerProvider _fileManagerProvider;
+        protected readonly IFileManagerProvider _fileManagerProvider;
         public BaseFileProviderTest(IFileManagerProvider fileManagerProvider)
         {
             _fileManagerProvider = fileManagerProvider;
+        }
+
+
+        public virtual Task OnInitialize()
+        {
+            return TaskHelper.GetCompletedTask();
         }
 
         [Theory]
@@ -19,8 +25,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("Mahdi.txt")]
         [InlineData("CreateFile\\Ali.txt")]
         [InlineData("CreateFile\\Mahdi.txt")]
-        public async Task CreateFile(string name)
+        public virtual async Task CreateFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
@@ -37,8 +44,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("Reza.txt")]
         [InlineData("DeleteFile\\Saeed.txt")]
         [InlineData("DeleteFile\\Reza.txt")]
-        public async Task DeleteFile(string name)
+        public virtual async Task DeleteFile(string name)
         {
+            await OnInitialize();
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
             await _fileManagerProvider.CreateFileAsync(name);
             Assert.True(await _fileManagerProvider.IsExistFileAsync(name));
@@ -51,8 +59,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("MahdiTruncate.txt")]
         [InlineData("CreateFile\\AliTruncate.txt")]
         [InlineData("CreateFile\\MahdiTruncate.txt")]
-        public async Task TruncateFile(string name)
+        public virtual async Task TruncateFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
@@ -67,8 +76,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("MahdiStreamWrite.txt")]
         [InlineData("CreateFile\\AliStreamWrite.txt")]
         [InlineData("CreateFile\\MahdiStreamWrite.txt")]
-        public async Task StreamWriteFile(string name)
+        public virtual async Task StreamWriteFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
