@@ -2,6 +2,8 @@ use std::path;
 use anyhow::bail;
 use async_trait::async_trait;
 use tokio::fs;
+use std::fs as stdfs;
+use std::io as stdio;
 
 use crate::models::{DirectoryDetail, FileDetail};
 use crate::providers::{PathProvider, DirectoryManager, FileManager};
@@ -49,8 +51,8 @@ impl<D> FileManager for DiskFileManager<D>
 
         return Ok(FileDetail {
             file_manager: self,
-            name: self.path_provider().get_object_name(updated_path.as_str())?,
-            path: self.path_provider().get_object_parent_path(updated_path.as_str())?,
+            name: self.path_provider().get_object_name(&updated_path)?,
+            path: self.path_provider().get_object_parent_path(&updated_path)?,
             len: metadata.len(),
         });
     }
@@ -71,9 +73,7 @@ impl<D> FileManager for DiskFileManager<D>
     async fn is_file_exists_async(&self, path: &str) -> anyhow::Result<bool> {
         let updated_path = self.path_provider().combine(vec![path])?;
 
-        let metadata = fs::metadata(updated_path).await;
-
-        let metadata = match metadata {
+        let metadata = match fs::metadata(updated_path).await {
             Ok(v) => v,
             Err(e) => {
                 if e.kind() == std::io::ErrorKind::NotFound {
@@ -90,6 +90,59 @@ impl<D> FileManager for DiskFileManager<D>
         let updated_path = self.path_provider().combine(vec![path])?;
 
         fs::remove_file(updated_path).await?;
+
+        Ok(())
+    }
+
+    fn get_file(&self, path: &str) -> anyhow::Result<FileDetail> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = stdfs::metadata(updated_path.clone())?;
+
+        if !metadata.is_file() {
+            return Err(stdio::Error::from(stdio::ErrorKind::NotFound).into());
+        }
+
+        Ok(FileDetail {
+            file_manager: self,
+            name: self.path_provider().get_object_name(&updated_path)?,
+            path: self.path_provider().get_object_parent_path(&updated_path)?,
+            len: metadata.len(),
+        })
+    }
+
+    fn create_file(&self, path: &str) -> anyhow::Result<FileDetail> {
+        if self.is_file_exists(path)? {
+            return Err(stdio::Error::from(stdio::ErrorKind::AlreadyExists).into());
+        }
+
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        stdfs::File::create(updated_path)?;
+
+        self.get_file(path)
+    }
+
+    fn is_file_exists(&self, path: &str) -> anyhow::Result<bool> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = match stdfs::metadata(updated_path) {
+            Ok(v) => v,
+            Err(e) => {
+                if e.kind() == stdio::ErrorKind::NotFound {
+                    return Ok(false);
+                }
+                return Err(e.into());
+            }
+        };
+
+        Ok(metadata.is_file())
+    }
+
+    fn delete_file(&self, path: &str) -> anyhow::Result<()> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        stdfs::remove_file(updated_path)?;
 
         Ok(())
     }
@@ -142,8 +195,8 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
 
         Ok(DirectoryDetail {
             dir_manager: self,
-            name: self.path_provider().get_object_name(updated_path.as_str())?,
-            path: self.path_provider().get_object_parent_path(updated_path.as_str())?,
+            name: self.path_provider().get_object_name(&updated_path)?,
+            path: self.path_provider().get_object_parent_path(&updated_path)?,
         }.clone())
     }
 
@@ -172,6 +225,58 @@ impl<P> DirectoryManager for DiskDirectoryManager<P>
             fs::remove_dir_all(updated_path).await?;
         } else {
             fs::remove_dir(updated_path).await?;
+        }
+
+        Ok(())
+    }
+
+    fn create_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        stdfs::create_dir(updated_path)?;
+
+        self.get_dir(path)
+    }
+
+    fn get_dir(&self, path: &str) -> anyhow::Result<DirectoryDetail> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = stdfs::metadata(updated_path.clone())?;
+
+        if !metadata.is_dir() {
+            return Err(stdio::Error::from(stdio::ErrorKind::AlreadyExists).into());
+        }
+
+        Ok(DirectoryDetail {
+            dir_manager: self,
+            name: self.path_provider().get_object_name(&updated_path)?,
+            path: self.path_provider().get_object_parent_path(&updated_path)?,
+        })
+    }
+
+    fn is_dir_exists(&self, path: &str) -> anyhow::Result<bool> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        let metadata = match stdfs::metadata(updated_path) {
+            Ok(v) => v,
+            Err(e) => {
+                if e.kind() == stdio::ErrorKind::NotFound {
+                    return Ok(false);
+                }
+                return Err(e.into());
+            }
+        };
+
+        Ok(metadata.is_dir())
+    }
+
+    fn delete_dir(&self, path: &str, recursive: bool) -> anyhow::Result<()> {
+        let updated_path = self.path_provider().combine(vec![path])?;
+
+        if recursive {
+            stdfs::remove_dir_all(updated_path)?;
+        } else {
+            stdfs::remove_dir(updated_path)?;
         }
 
         Ok(())
