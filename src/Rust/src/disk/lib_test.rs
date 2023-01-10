@@ -554,7 +554,7 @@ mod test_disk_file_manager_test {
 fn get_test_dir(provider: &dyn PathProvider) -> (String, String, TempDir) {
     let t = tempdir().unwrap();
     let tmp_dir = t.path().to_str().unwrap();
-    let test_dir = provider.combine(vec![tmp_dir.clone(), "test_dir"]).unwrap();
+    let test_dir = provider.combine(vec![tmp_dir, "test_dir"]).unwrap();
 
     (tmp_dir.to_string(), test_dir, t)
 }
@@ -562,7 +562,7 @@ fn get_test_dir(provider: &dyn PathProvider) -> (String, String, TempDir) {
 fn get_test_file(provider: &dyn PathProvider) -> (String, String, TempDir) {
     let t = tempdir().unwrap();
     let tmp_dir = t.path().to_str().unwrap();
-    let test_file = provider.combine(vec![tmp_dir.clone(), "test_file"]).unwrap();
+    let test_file = provider.combine(vec![tmp_dir, "test_file"]).unwrap();
 
     (tmp_dir.to_string(), test_file, t)
 }

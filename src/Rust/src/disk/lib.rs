@@ -292,6 +292,12 @@ impl SystemPathProvider {
     }
 }
 
+impl Default for SystemPathProvider {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PathProvider for SystemPathProvider {
     fn combine(&self, paths: Vec<&str>) -> anyhow::Result<String> {
         let mut buf = path::PathBuf::new();
@@ -325,7 +331,7 @@ impl PathProvider for SystemPathProvider {
 
         if let Some(v) = p.parent() {
             if let Some(v) = v.to_str() {
-                if v == "" {
+                if v.is_empty() {
                     bail!("invalid path: {}", path);
                 }
                 return Ok(v.to_string());
@@ -347,7 +353,7 @@ fn normalize_path(mut path: String) -> String {
         }
 
         let tmp_path: String = path.chars().take(pos).collect();
-        if let Some(parent_pos) = tmp_path.rfind("/") {
+        if let Some(parent_pos) = tmp_path.rfind('/') {
             let a: String = tmp_path.chars().take(parent_pos).collect::<String>();
             let b: String = path.chars().skip(pos + 3).collect::<String>();
             path = a;
