@@ -80,6 +80,40 @@ namespace EasyMicroservices.FileManager.Interfaces
         /// <returns></returns>
         Task WriteAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default);
         /// <summary>
+        /// Write text to a file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task WriteAllTextAsync(string path, string text, Encoding encoding, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Write text to a file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="text"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task WriteAllTextAsync(string path, string text, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Write text lines to a file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="lines"></param>
+        /// <param name="encoding"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task WriteAllLinesAsync(string path, string[] lines, Encoding encoding, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// Write text lines to a file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="lines"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task WriteAllLinesAsync(string path, string[] lines, CancellationToken cancellationToken = default);
+        /// <summary>
         /// read bytes from a file
         /// </summary>
         /// <param name="path"></param>

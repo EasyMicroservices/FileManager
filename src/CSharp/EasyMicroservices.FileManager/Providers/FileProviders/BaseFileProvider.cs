@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyMicroservices.FileManager.Providers.FileProviders
 {
@@ -28,10 +29,12 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// Buffer size to read stream
         /// </summary>
         public int BufferSize { get; set; } = 1024 * 512;
+
         /// <summary>
         /// Directory provider to manage folders
         /// </summary>
         public IDirectoryManagerProvider DirectoryManagerProvider { get; set; }
+
         /// <summary>
         /// Path provider to manage paths
         /// </summary>
@@ -176,6 +179,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
             using var streamToWrite = await OpenFileAsync(path);
             await CopyToStreamAsync(stream, stream.Length, streamToWrite);
         }
+
         /// <summary>
         /// Create new file
         /// </summary>
@@ -183,6 +187,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task<FileDetail> CreateFileAsync(string path, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// open file to read or write stream
         /// </summary>
@@ -190,6 +195,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// check if file is exists
         /// </summary>
@@ -197,6 +203,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// delete file
         /// </summary>
@@ -204,6 +211,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// set length of file as 0
         /// make a file data empty
@@ -212,6 +220,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task TruncateFileAsync(string path, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// 
         /// </summary>
@@ -226,6 +235,73 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
             using var memoryStream = new MemoryStream(bytes);
             memoryStream.Seek(0, SeekOrigin.Begin);
             await CopyToStreamAsync(fileStream, memoryStream.Length, memoryStream, cancellationToken);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="text"></param>
+        /// <param name="encoding"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task WriteAllTextAsync(string path, string text, Encoding encoding, CancellationToken cancellationToken = default)
+        {
+            using var fileStream = await OpenFileAsync(path, cancellationToken);
+            using var memoryStream = new MemoryStream();
+            using var memoryWriterStream = new StreamWriter(memoryStream, encoding);
+            await memoryWriterStream.WriteAsync(text);
+            await memoryWriterStream.FlushAsync();
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            await CopyToStreamAsync(fileStream, memoryStream.Length, memoryStream, cancellationToken);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="text"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public Task WriteAllTextAsync(string path, string text, CancellationToken cancellationToken = default)
+        {
+            return WriteAllTextAsync(path, text, Encoding.UTF8, cancellationToken);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="lines"></param>
+        /// <param name="encoding"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Task WriteAllLinesAsync(string path, string[] lines, Encoding encoding, CancellationToken cancellationToken = default)
+        {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (i == lines.Length - 1)
+                    builder.Append(line);
+                else
+                    builder.AppendLine(line);
+            }
+            return WriteAllTextAsync(path, builder.ToString(), encoding, cancellationToken);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="lines"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public Task WriteAllLinesAsync(string path, string[] lines, CancellationToken cancellationToken = default)
+        {
+            return WriteAllLinesAsync(path, lines, Encoding.UTF8, cancellationToken);
         }
 
         /// <summary>
