@@ -1,6 +1,7 @@
 ﻿using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
@@ -31,8 +32,9 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// Create new directory
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path)
+        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             string fullName = NormalizePath(path);
             var directory = await GetDirectoryAsync(fullName);
@@ -44,8 +46,9 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// </summary>
         /// <param name="path"></param>
         /// <param name="recursive"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive)
+        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default)
         {
             string fullName = NormalizePath(path);
             Directories.Remove(fullName);
@@ -55,8 +58,9 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// check if directory is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> IsExistDirectoryAsync(string path)
+        public override Task<bool> IsExistDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             string fullName = NormalizePath(path);
             return Task.FromResult(Directories.Contains(fullName));

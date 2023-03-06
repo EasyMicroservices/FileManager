@@ -3,6 +3,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Util;
 using EasyMicroservices.FileManager.Models;
 using EasyMicroservices.FileManager.Providers.DirectoryProviders;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.AmazonS3.Providers
@@ -42,8 +43,9 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// create a new Amazon S3 bucket.
         /// </summary>
         /// <param name="path">The name of the bucket to create.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>return result message.</returns>
-        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path)
+        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             var putBucketRequest = new PutBucketRequest
             {
@@ -63,7 +65,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <returns>The response from the ListingBuckets call that contains a
         /// list of the buckets owned by the default user.</returns>
-        public override Task<DirectoryDetail> GetDirectoryAsync(string path)
+        public override Task<DirectoryDetail> GetDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }
@@ -71,8 +73,9 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// check the S3 bucket bucketName exists.
         /// </summary>
         /// <param name="path">The name of the bucket to check.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>return true if bucket exists.</returns>
-        public override async Task<bool> IsExistDirectoryAsync(string path)
+        public override async Task<bool> IsExistDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             return await AmazonS3Util.DoesS3BucketExistV2Async(_client, path);
         }
@@ -80,8 +83,9 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// delete the S3 bucket.
         /// </summary>
         /// <param name="path">The name of the bucket to be deleted.</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>return result message.</returns>
-        public override async Task<bool> DeleteDirectoryAsync(string path)
+        public override async Task<bool> DeleteDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             var response = await _client.DeleteBucketAsync(path);
             if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
@@ -98,9 +102,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path"></param>
         /// <param name="recursive"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive)
+        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }

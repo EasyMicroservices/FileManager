@@ -3,6 +3,7 @@ using EasyMicroservices.FileManager.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.Providers.FileProviders
@@ -25,8 +26,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// Create new file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override async Task<FileDetail> CreateFileAsync(string path)
+        public override async Task<FileDetail> CreateFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(NormalizePath(path));
             await CreateDirectoryIfNotExist(file);
@@ -38,8 +40,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// delete file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> DeleteFileAsync(string path)
+        public override Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             Files.Remove(path);
@@ -49,8 +52,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// check if file is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> IsExistFileAsync(string path)
+        public override Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             return Task.FromResult(Files.ContainsKey(path));
@@ -59,8 +63,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// Get file's details
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override async Task<FileDetail> GetFileAsync(string path)
+        public override async Task<FileDetail> GetFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await base.GetFileAsync(path);
             if (await file.IsExistAsync())
@@ -77,8 +82,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// </summary>
         /// <param name="path"></param>
         /// <param name="stream"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override async Task WriteStreamToFileAsync(string path, Stream stream)
+        public override async Task WriteStreamToFileAsync(string path, Stream stream, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             if (Files.TryGetValue(path, out Stream fileStream))
@@ -90,9 +96,10 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// open file to read or write stream
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public override async Task<Stream> OpenFileAsync(string path)
+        public override async Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             if (Files.TryGetValue(path, out Stream fileStream))
@@ -109,9 +116,10 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// make a file data empty
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public override Task TruncateFileAsync(string path)
+        public override Task TruncateFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             if (Files.TryGetValue(path, out Stream fileStream))
