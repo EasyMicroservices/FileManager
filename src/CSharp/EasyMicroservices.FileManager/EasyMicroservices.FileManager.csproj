@@ -5,7 +5,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
     <Authors>EasyMicroservices</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.0.1</Version>
+    <Version>0.0.0.2</Version>
     <Description>Manage your files with a wrapper in everywhere.</Description>
     <Copyright>EasyMicroservice@gmail.com</Copyright>
     <PackageTags>file,filemanager,disk,memory</PackageTags>

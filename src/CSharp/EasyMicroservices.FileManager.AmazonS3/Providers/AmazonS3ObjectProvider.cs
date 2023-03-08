@@ -5,6 +5,7 @@ using EasyMicroservices.FileManager.Models;
 using EasyMicroservices.FileManager.Providers.FileProviders;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.AmazonS3.Providers
@@ -43,9 +44,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// Create a file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override async Task<FileDetail> CreateFileAsync(string path)
+        public override async Task<FileDetail> CreateFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(path);
             var putRequest = new PutObjectRequest
@@ -71,9 +73,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// delete file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override async Task<bool> DeleteFileAsync(string path)
+        public override async Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(path);
             DeleteObjectRequest request = new()
@@ -94,9 +97,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// check if file is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override async Task<bool> IsExistFileAsync(string path)
+        public override async Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(path);
             return await _client.DoesS3BucketExistAsync(file.Name);
@@ -105,9 +109,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// open file to read or write stream
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override async Task<Stream> OpenFileAsync(string path)
+        public override async Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(path);
             GetObjectRequest request = new GetObjectRequest
@@ -126,9 +131,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// set length of file as 0
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override Task TruncateFileAsync(string path)
+        public override Task TruncateFileAsync(string path, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }
@@ -137,9 +143,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path"></param>
         /// <param name="stream"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public override Task WriteStreamToFileAsync(string path, Stream stream)
+        public override Task WriteStreamToFileAsync(string path, Stream stream, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }

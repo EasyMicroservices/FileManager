@@ -4,7 +4,7 @@
 		<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
 		<Authors>EasyMicroservices</Authors>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>0.0.0.1</Version>
+		<Version>0.0.0.2</Version>
 		<Description>Manage your files with a wrapper in everywhere.</Description>
 		<Copyright>EasyMicroservice@gmail.com</Copyright>
 		<PackageTags>s3,storage</PackageTags>
