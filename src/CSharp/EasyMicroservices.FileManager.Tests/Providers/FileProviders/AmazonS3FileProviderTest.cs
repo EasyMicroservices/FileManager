@@ -1,5 +1,4 @@
-﻿#if (NET6_0)
-using Amazon.S3;
+﻿using Amazon.S3;
 using EasyMicroservices.FileManager.AmazonS3.Providers;
 using EasyMicroservices.Laboratory.Constants;
 using EasyMicroservices.Laboratory.Engine;
@@ -106,6 +105,10 @@ Content-Length: 0
         {
             return TaskHelper.GetCompletedTask();
         }
+
+        public override Task WriteAndReadFile(string name)
+        {
+            return TaskHelper.GetCompletedTask();
+        }
     }
 }
-#endif

@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyMicroservices.FileManager.Providers.FileProviders
 {
@@ -66,6 +65,8 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         public async Task<MemoryStream> StreamToBytesAsync(Stream fromStream, long length, CancellationToken cancellationToken = default)
         {
             MemoryStream toStream = new MemoryStream();
+            if (length == 0)
+                return toStream;
             if (fromStream.CanSeek)
                 fromStream.Seek(0, SeekOrigin.Begin);
             var readBytes = new byte[BufferSize];
@@ -231,10 +232,9 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <exception cref="NotImplementedException"></exception>
         public async Task WriteAllBytesAsync(string path, byte[] bytes, CancellationToken cancellationToken = default)
         {
-            using var fileStream = await OpenFileAsync(path, cancellationToken);
             using var memoryStream = new MemoryStream(bytes);
             memoryStream.Seek(0, SeekOrigin.Begin);
-            await CopyToStreamAsync(fileStream, memoryStream.Length, memoryStream, cancellationToken);
+            await WriteStreamToFileAsync(path, memoryStream, cancellationToken);
         }
 
         /// <summary>
@@ -247,13 +247,12 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <returns></returns>
         public async Task WriteAllTextAsync(string path, string text, Encoding encoding, CancellationToken cancellationToken = default)
         {
-            using var fileStream = await OpenFileAsync(path, cancellationToken);
             using var memoryStream = new MemoryStream();
             using var memoryWriterStream = new StreamWriter(memoryStream, encoding);
             await memoryWriterStream.WriteAsync(text);
             await memoryWriterStream.FlushAsync();
             memoryStream.Seek(0, SeekOrigin.Begin);
-            await CopyToStreamAsync(fileStream, memoryStream.Length, memoryStream, cancellationToken);
+            await WriteStreamToFileAsync(path, memoryStream, cancellationToken);
         }
 
         /// <summary>
