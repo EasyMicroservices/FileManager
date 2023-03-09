@@ -1,6 +1,7 @@
 ﻿using EasyMicroservices.FileManager.Interfaces;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -95,6 +96,47 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
             var readStream = await fileSetails.OpenFileAsync();
 
             await CheckReadStream(readStream, length);
+        }
+
+        [Theory]
+        [InlineData("AliReadWrite.txt")]
+        [InlineData("MahdiReadWrite.txt")]
+        [InlineData("ReadWriteFile\\Ali.txt")]
+        [InlineData("ReadWriteFile\\Mahdi.txt")]
+        public virtual async Task WriteAndReadFile(string name)
+        {
+            await OnInitialize();
+            if (await _fileManagerProvider.IsExistFileAsync(name))
+                await _fileManagerProvider.TruncateFileAsync(name);
+            else
+                await _fileManagerProvider.CreateFileAsync(name);
+            Assert.True(await _fileManagerProvider.IsExistFileAsync(name));
+            string[] lines = new string[]
+            {
+                "line1",
+                "line2"
+            };
+            await _fileManagerProvider.WriteAllLinesAsync(name, lines);
+            var readLines = await _fileManagerProvider.ReadAllLinesAsync(name);
+            Assert.True(lines.SequenceEqual(readLines));
+
+            await _fileManagerProvider.TruncateFileAsync(name);
+            var bytes = new byte[]
+            {
+                1,
+                2,
+                5,
+                7
+            };
+            await _fileManagerProvider.WriteAllBytesAsync(name, bytes);
+            var allBytes = await _fileManagerProvider.ReadAllBytesAsync(name);
+            Assert.True(bytes.SequenceEqual(allBytes));
+
+            await _fileManagerProvider.TruncateFileAsync(name);
+            var text = "My name is ali";
+            await _fileManagerProvider.WriteAllTextAsync(name, text);
+            var readText = await _fileManagerProvider.ReadAllTextAsync(name);
+            Assert.Equal(text, readText);
         }
 
         async Task<Stream> TaskRandomStream(long length)
