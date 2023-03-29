@@ -87,6 +87,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         public override async Task WriteStreamToFileAsync(string path, Stream stream, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
+            using var file = await OpenOrCreateFile(path, cancellationToken);
             if (Files.TryGetValue(path, out Stream fileStream))
             {
                 await CopyToStreamAsync(stream, stream.Length, fileStream);
