@@ -177,7 +177,7 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <returns></returns>
         public virtual async Task WriteStreamToFileAsync(string path, Stream stream, CancellationToken cancellationToken = default)
         {
-            using var streamToWrite = await OpenFileAsync(path);
+            using var streamToWrite = await OpenOrCreateFile(path, cancellationToken);
             await CopyToStreamAsync(stream, stream.Length, streamToWrite);
         }
 
