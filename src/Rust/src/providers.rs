@@ -13,20 +13,32 @@ pub trait PathProvider: Send + Sync + Debug + helper::AsAny {
 #[async_trait]
 pub trait DirectoryManager: Send + Sync + Debug + helper::AsAny {
     fn path_provider(&self) -> &dyn PathProvider;
+    // Sync methods
     async fn create_dir_async(&self, path: &str) -> Result<DirectoryDetail>;
     async fn get_dir_async(&self, path: &str) -> Result<DirectoryDetail>;
     async fn is_dir_exists_async(&self, path: &str) -> Result<bool>;
     async fn delete_dir_async(&self, path: &str, recursive: bool) -> Result<()>;
+    // Async methods
+    fn create_dir(&self, path: &str) -> Result<DirectoryDetail>;
+    fn get_dir(&self, path: &str) -> Result<DirectoryDetail>;
+    fn is_dir_exists(&self, path: &str) -> Result<bool>;
+    fn delete_dir(&self, path: &str, recursive: bool) -> Result<()>;
 }
 
 #[async_trait]
 pub trait FileManager: Send + Sync + Debug + helper::AsAny {
     fn path_provider(&self) -> &dyn PathProvider;
     fn dir_manager(&self) -> &dyn DirectoryManager;
+    // Async methods
     async fn get_file_async(&self, path: &str) -> Result<FileDetail>;
     async fn create_file_async(&self, path: &str) -> Result<FileDetail>;
     async fn is_file_exists_async(&self, path: &str) -> Result<bool>;
     async fn delete_file_async(&self, path: &str) -> Result<()>;
+    // Sync methods
+    fn get_file(&self, path: &str) -> Result<FileDetail>;
+    fn create_file(&self, path: &str) -> Result<FileDetail>;
+    fn is_file_exists(&self, path: &str) -> Result<bool>;
+    fn delete_file(&self, path: &str) -> Result<()>;
 }
 
 
