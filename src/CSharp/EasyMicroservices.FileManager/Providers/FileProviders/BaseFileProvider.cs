@@ -374,5 +374,14 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         {
             return ReadAllTextAsync(path, Encoding.UTF8, cancellationToken);
         }
+
+        /// <summary>
+        /// complete check permission
+        /// </summary>
+        /// <param name="isComplete"></param>
+        public virtual void CompleteCheckPermission(bool isComplete)
+        {
+
+        }
     }
 }

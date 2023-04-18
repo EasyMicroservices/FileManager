@@ -8,8 +8,8 @@
     <ApplicationId>easymicroservices.filemanager.androidTestApp</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-    <BaseOutputPath>C:\EM\FileManager</BaseOutputPath>
-    <BaseIntermediateOutputPath>C:\EM\FileManager\obj\</BaseIntermediateOutputPath>
+    <BaseOutputPath Condition=" '$(OS)' == 'Windows_NT' ">C:\EM\FileManager\AndroidTestApp</BaseOutputPath>
+    <BaseIntermediateOutputPath Condition=" '$(OS)' == 'Windows_NT' ">C:\EM\FileManager\AndroidTestApp\obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyMicroservices.FileManager.Android\EasyMicroservices.FileManager.Android.csproj" />

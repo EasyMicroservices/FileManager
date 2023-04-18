@@ -31,7 +31,7 @@ namespace EasyMicroservices.FileManager.Android.Providers
         /// complete check permission
         /// </summary>
         /// <param name="isComplete"></param>
-        public void CompleteCheckPermission(bool isComplete)
+        public override void CompleteCheckPermission(bool isComplete)
         {
             androidPermissionManager.Complete(isComplete);
         }
