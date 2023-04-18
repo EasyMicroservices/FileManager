@@ -95,5 +95,13 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         public abstract Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// complete check permission
+        /// </summary>
+        /// <param name="isComplete"></param>
+        public virtual void CompleteCheckPermission(bool isComplete)
+        {
+
+        }
     }
 }
