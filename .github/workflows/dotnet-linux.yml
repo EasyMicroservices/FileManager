@@ -19,6 +19,8 @@ jobs:
             5.0.x
             6.0.x
             7.0.x
+      - name: Install Android
+        run: dotnet workload install android
       - name: Restore dependencies
         run: dotnet restore ./src/CSharp/EasyMicroservices.FileManager.sln
       - name: Build
