@@ -53,5 +53,10 @@ namespace EasyMicroservices.FileManager.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// complete if check permission finished
+        /// </summary>
+        /// <param name="isGranted"></param>
+        void CompleteCheckPermission(bool isGranted);
     }
 }

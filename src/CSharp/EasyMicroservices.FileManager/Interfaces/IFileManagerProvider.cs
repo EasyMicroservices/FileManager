@@ -150,5 +150,10 @@ namespace EasyMicroservices.FileManager.Interfaces
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<string> ReadAllTextAsync(string path, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// complete if check permission finished
+        /// </summary>
+        /// <param name="isGranted"></param>
+        void CompleteCheckPermission(bool isGranted);
     }
 }

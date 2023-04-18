@@ -28,7 +28,8 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         {
             var file = await GetFileAsync(NormalizePath(path));
             await CreateDirectoryIfNotExist(file);
-            File.Create(file.FullPath).Dispose();
+            if (await CheckPermissionAsync(path))
+                File.Create(file.FullPath).Dispose();
             return file;
         }
         /// <summary>
@@ -40,10 +41,13 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         public override async Task<FileDetail> GetFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await base.GetFileAsync(path);
-            if (await file.IsExistAsync())
+            if (await CheckPermissionAsync(path))
             {
-                var fileInfo = new FileInfo(file.FullPath);
-                file.Length = fileInfo.Length;
+                if (await file.IsExistAsync())
+                {
+                    var fileInfo = new FileInfo(file.FullPath);
+                    file.Length = fileInfo.Length;
+                }
             }
             return file;
         }
@@ -53,11 +57,12 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
+        public override async Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
-            File.Delete(path);
-            return Task.FromResult(true);
+            if (await CheckPermissionAsync(path))
+                File.Delete(path);
+            return true;
         }
         /// <summary>
         /// check if file is exists
@@ -76,10 +81,11 @@ namespace EasyMicroservices.FileManager.Providers.FileProviders
         /// <param name="path"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
+        public override async Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
-            return Task.FromResult((Stream)File.Open(path, FileMode.Open));
+            await CheckPermissionAsync(path);
+            return File.Open(path, FileMode.Open);
         }
         /// <summary>
         /// set length of file as 0
