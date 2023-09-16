@@ -1,17 +1,25 @@
-using System.Reflection;
-using EasyMicroservices.FileManager.Interfaces;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
+using EasyMicroservices.FileManager.Providers.FileProviders;
+using System.Reflection;
 
 namespace EasyMicroservices.FileManager.AzureStorageBlobs.Providers;
 
-public class AzureStorageBlobsProvider : IFileManagerProvider
+/// <summary>
+/// 
+/// </summary>
+public class AzureStorageBlobsProvider : BaseFileProvider
 {
     private readonly BlobContainerClient _container;
-
-    public AzureStorageBlobsProvider(BlobContainerClient container)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="directoryManagerProvider"></param>
+    public AzureStorageBlobsProvider(BlobContainerClient container, IDirectoryManagerProvider directoryManagerProvider) : base(directoryManagerProvider)
     {
         _container = container;
     }
@@ -21,29 +29,21 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// </summary>
     /// <param name="storageConnectionString"></param>
     /// <param name="storageContainerName"></param>
-    public AzureStorageBlobsProvider(string storageConnectionString, string storageContainerName)
+    public AzureStorageBlobsProvider(string storageConnectionString, string storageContainerName, IDirectoryManagerProvider directoryManagerProvider) : base(directoryManagerProvider)
     {
         _container = new BlobContainerClient(storageConnectionString, storageContainerName);
     }
 
-   
-    public IDirectoryManagerProvider DirectoryManagerProvider { get; set; }
-
-    public IPathProvider PathProvider
-    {
-        get => throw new System.NotImplementedException();
-        set => throw new System.NotImplementedException();
-    }
 
     public async Task<FileDetail> GetFileAsync(string path)
     {
-        FileDetail file =new FileDetail(this);
+        FileDetail file = new FileDetail(this);
         BlobClient client = _container.GetBlobClient(path);
         if (await client.ExistsAsync())
         {
             file.DirectoryPath = path;
             file.Name = path;
-            Stream stream =await OpenFileAsync(path);
+            Stream stream = await OpenFileAsync(path);
             file.Length = stream.Length;
 
         }
@@ -57,9 +57,9 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// </summary>
     /// <param name="path">Path is FileName for creating</param>
     /// <returns></returns>
-    public async Task<FileDetail> CreateFileAsync(string path)
-    {  
-        
+    public override async Task<FileDetail> CreateFileAsync(string path, CancellationToken cancellationToken = default)
+    {
+
         BlobClient client = _container.GetBlobClient(path);
         if (await IsExistFileAsync(path))
             await DeleteFileAsync(path);
@@ -81,7 +81,7 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// </summary>
     /// <param name="path">Path is FileName for opening</param>
     /// <returns></returns>
-    public async Task<Stream> OpenFileAsync(string path)
+    public override async Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
     {
         Stream blob = Stream.Null;
 
@@ -95,12 +95,12 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
         return blob;
     }
 
-    
+
     public async Task WriteStreamToFileAsync(string path, Stream stream)
     {
         BlobClient client = _container.GetBlobClient(path);
 
-         await client.UploadAsync(stream ,true);
+        await client.UploadAsync(stream, true);
 
     }
 
@@ -109,7 +109,7 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// </summary>
     /// <param name="path">Path is FileName for checking out</param>
     /// <returns></returns>
-    public async Task<bool> IsExistFileAsync(string path)
+    public override async Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default)
     {
         BlobClient client = _container.GetBlobClient(path);
         bool exists = await client.ExistsAsync();
@@ -121,7 +121,7 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     /// </summary>
     /// <param name="path">Path is FileName to delete.</param>
     /// <returns></returns>
-    public async Task<bool> DeleteFileAsync(string path)
+    public override async Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -140,13 +140,13 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
         return true;
     }
 
-    public Task TruncateFileAsync(string path)
+    public override Task TruncateFileAsync(string path, CancellationToken cancellationToken = default)
     {
         BlobClient client = _container.GetBlobClient(path);
-      
+
         throw new NotImplementedException();
     }
-    
+
     public async Task<List<FileDetail>> GetListAsync()
     {
         List<FileDetail> blobsList = new List<FileDetail>();
@@ -157,7 +157,7 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
             blobsList.Add(new FileDetail(this)
             {
                 Name = name,
-                Length = item.Properties.ContentLength??0,
+                Length = item.Properties.ContentLength ?? 0,
                 DirectoryPath = uri
             });
         }
@@ -166,4 +166,3 @@ public class AzureStorageBlobsProvider : IFileManagerProvider
     }
 }
 
- 
