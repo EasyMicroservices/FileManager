@@ -1,10 +1,10 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Util;
 using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
 using EasyMicroservices.FileManager.Providers.FileProviders;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,19 +54,16 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
             {
                 BucketName = DirectoryManagerProvider.Root,
                 Key = file.Name,
-                ContentType = "text/plain"
+                ContentType = "text/plain",
+                UseChunkEncoding = false
             };
 
             putRequest.Metadata.Add("x-amz-meta-title", "someTitle");
             PutObjectResponse response = await _client.PutObjectAsync(putRequest, new System.Threading.CancellationToken());
 
             var objects3 = new FileDetail(this);
-            foreach (PropertyInfo prop in response.GetType().GetProperties())
-            {
-                objects3.Name = prop.Name;
-                objects3.DirectoryPath = path;
-            }
-
+            objects3.Name = putRequest.Key;
+            objects3.DirectoryPath = putRequest.BucketName;
             return objects3;
         }
         /// <summary>
@@ -86,7 +83,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
             };
 
             DeleteObjectResponse response = await _client.DeleteObjectAsync(request);
-            if (response.HttpStatusCode == System.Net.HttpStatusCode.OK)
+            if (response.HttpStatusCode == System.Net.HttpStatusCode.NoContent)
                 return true;
             else
                 return false;
@@ -103,7 +100,7 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         public override async Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default)
         {
             var file = await GetFileAsync(path);
-            return await _client.DoesS3BucketExistAsync(file.Name);
+            return await AmazonS3Util.DoesS3BucketExistV2Async(_client, file.Name);
         }
         /// <summary>
         /// open file to read or write stream
