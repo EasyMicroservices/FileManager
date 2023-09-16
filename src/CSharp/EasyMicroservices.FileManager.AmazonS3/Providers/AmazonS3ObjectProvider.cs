@@ -1,13 +1,11 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
-using Amazon.S3.Util;
 using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
-using EasyMicroservices.FileManager.Providers;
-using System;
-using System.Collections.Generic;
+using EasyMicroservices.FileManager.Providers.FileProviders;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.AmazonS3.Providers
@@ -15,47 +13,47 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
     /// <summary>
     /// Working with AWS S3 storage
     /// </summary>
-    public class AmazonS3ObjectProvider : IFileManagerProvider
+    public class AmazonS3ObjectProvider : BaseFileProvider
     {
         private readonly IAmazonS3 _client;
-        private readonly string _objectName;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="directoryManagerProvider"></param>
         /// <param name="client"></param>
-        /// <param name="objectName"></param>
-        public AmazonS3ObjectProvider(IDirectoryManagerProvider directoryManagerProvider, IAmazonS3 client, string objectName)
+        public AmazonS3ObjectProvider(IDirectoryManagerProvider directoryManagerProvider, IAmazonS3 client) : base(directoryManagerProvider)
         {
             DirectoryManagerProvider = directoryManagerProvider;
             PathProvider = directoryManagerProvider.PathProvider;
             _client = client;
-            _objectName = objectName;
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public IDirectoryManagerProvider DirectoryManagerProvider { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public IPathProvider PathProvider { get; set; }
+        /// <param name="directoryManagerProvider"></param>
+        public AmazonS3ObjectProvider(IDirectoryManagerProvider directoryManagerProvider) : base(directoryManagerProvider)
+        {
+            DirectoryManagerProvider = directoryManagerProvider;
+            PathProvider = directoryManagerProvider.PathProvider;
+            _client = (directoryManagerProvider as AmazonS3BucketProvider)._client;
+        }
 
         /// <summary>
         /// Create a file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public async Task<FileDetail> CreateFileAsync(string path)
+        public override async Task<FileDetail> CreateFileAsync(string path, CancellationToken cancellationToken = default)
         {
+            var file = await GetFileAsync(path);
             var putRequest = new PutObjectRequest
             {
-                BucketName = path,
-                Key = _objectName,
-                FilePath = path,
+                BucketName = DirectoryManagerProvider.Root,
+                Key = file.Name,
                 ContentType = "text/plain"
             };
 
@@ -75,14 +73,16 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// delete file
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public async Task<bool> DeleteFileAsync(string path)
+        public override async Task<bool> DeleteFileAsync(string path, CancellationToken cancellationToken = default)
         {
+            var file = await GetFileAsync(path);
             DeleteObjectRequest request = new()
             {
                 BucketName = path,
-                Key = _objectName
+                Key = file.Name
             };
 
             DeleteObjectResponse response = await _client.DeleteObjectAsync(request);
@@ -92,38 +92,33 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
                 return false;
 
         }
-        /// <summary>
-        /// get file's details
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public Task<FileDetail> GetFileAsync(string path)
-        {
-            throw new System.NotImplementedException();
-        }
+
         /// <summary>
         /// check if file is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public Task<bool> IsExistFileAsync(string path)
+        public override async Task<bool> IsExistFileAsync(string path, CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            var file = await GetFileAsync(path);
+            return await _client.DoesS3BucketExistAsync(file.Name);
         }
         /// <summary>
         /// open file to read or write stream
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public async Task<Stream> OpenFileAsync(string path)
+        public override async Task<Stream> OpenFileAsync(string path, CancellationToken cancellationToken = default)
         {
+            var file = await GetFileAsync(path);
             GetObjectRequest request = new GetObjectRequest
             {
                 BucketName = path,
-                Key = _objectName,
+                Key = file.Name,
             };
 
             using (GetObjectResponse response = await _client.GetObjectAsync(request))
@@ -136,9 +131,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// set length of file as 0
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public Task TruncateFileAsync(string path)
+        public override Task TruncateFileAsync(string path, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }
@@ -147,9 +143,10 @@ namespace EasyMicroservices.FileManager.AmazonS3.Providers
         /// </summary>
         /// <param name="path"></param>
         /// <param name="stream"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="System.NotImplementedException"></exception>
-        public Task WriteStreamToFileAsync(string path, Stream stream)
+        public override Task WriteStreamToFileAsync(string path, Stream stream, CancellationToken cancellationToken = default)
         {
             throw new System.NotImplementedException();
         }

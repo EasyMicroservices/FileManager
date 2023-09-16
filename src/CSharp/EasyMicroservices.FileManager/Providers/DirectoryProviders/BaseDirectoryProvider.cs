@@ -1,6 +1,7 @@
 ﻿using EasyMicroservices.FileManager.Interfaces;
 using EasyMicroservices.FileManager.Models;
 using EasyMicroservices.FileManager.Providers.PathProviders;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
@@ -51,14 +52,16 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// Create new directory
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public abstract Task<DirectoryDetail> CreateDirectoryAsync(string path);
+        public abstract Task<DirectoryDetail> CreateDirectoryAsync(string path, CancellationToken cancellationToken = default);
         /// <summary>
         /// Get directory's details
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual Task<DirectoryDetail> GetDirectoryAsync(string path)
+        public virtual Task<DirectoryDetail> GetDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             return Task.FromResult(new DirectoryDetail(this)
@@ -71,14 +74,16 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// check if directory is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public abstract Task<bool> IsExistDirectoryAsync(string path);
+        public abstract Task<bool> IsExistDirectoryAsync(string path, CancellationToken cancellationToken = default);
         /// <summary>
         /// delete the directory
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual Task<bool> DeleteDirectoryAsync(string path)
+        public virtual Task<bool> DeleteDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             return DeleteDirectoryAsync(path, false);
         }
@@ -87,7 +92,16 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// </summary>
         /// <param name="path"></param>
         /// <param name="recursive"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public abstract Task<bool> DeleteDirectoryAsync(string path, bool recursive);
+        public abstract Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// complete check permission
+        /// </summary>
+        /// <param name="isComplete"></param>
+        public virtual void CompleteCheckPermission(bool isComplete)
+        {
+
+        }
     }
 }

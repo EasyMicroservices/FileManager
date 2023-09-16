@@ -1,4 +1,5 @@
 ﻿using EasyMicroservices.FileManager.Interfaces;
+using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.Providers
 {
@@ -19,6 +20,14 @@ namespace EasyMicroservices.FileManager.Providers
             if (path.StartsWith(directoryManagerProvider.Root))
                 return path;
             return pathProvider.Combine(directoryManagerProvider.Root, path);
+        }
+        /// <summary>
+        /// Check application has permission for a path
+        /// </summary>
+        /// <returns></returns>
+        public virtual Task<bool> CheckPermissionAsync(string path)
+        {
+            return Task.FromResult(true);
         }
     }
 }

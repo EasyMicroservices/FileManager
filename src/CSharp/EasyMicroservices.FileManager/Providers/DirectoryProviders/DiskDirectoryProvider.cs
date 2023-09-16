@@ -2,6 +2,7 @@
 using EasyMicroservices.FileManager.Models;
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
@@ -30,37 +31,43 @@ namespace EasyMicroservices.FileManager.Providers.DirectoryProviders
         /// Create new directory
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<DirectoryDetail> CreateDirectoryAsync(string path)
+        public override async Task<DirectoryDetail> CreateDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
-            Directory.CreateDirectory(path);
-            return GetDirectoryAsync(path);
+            if (await CheckPermissionAsync(path))
+                Directory.CreateDirectory(path);
+            return await GetDirectoryAsync(path);
         }
         /// <summary>
         /// delete the directory
         /// </summary>
         /// <param name="path"></param>
         /// <param name="recursive"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public override Task<bool> DeleteDirectoryAsync(string path, bool recursive)
+        public override async Task<bool> DeleteDirectoryAsync(string path, bool recursive, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
             if (!path.StartsWith(Root))
                 throw new Exception($"Warning to delete disk folder {path}");
-            Directory.Delete(path, recursive);
-            return Task.FromResult(true);
+            if (await CheckPermissionAsync(path))
+                Directory.Delete(path, recursive);
+            return true;
         }
         /// <summary>
         /// check if directory is exists
         /// </summary>
         /// <param name="path"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override Task<bool> IsExistDirectoryAsync(string path)
+        public override async Task<bool> IsExistDirectoryAsync(string path, CancellationToken cancellationToken = default)
         {
             path = NormalizePath(path);
-            return Task.FromResult(Directory.Exists(path));
+            await CheckPermissionAsync(path);
+            return Directory.Exists(path);
         }
     }
 }

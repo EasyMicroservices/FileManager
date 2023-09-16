@@ -1,48 +1,51 @@
-use crate::{DirectoryManager, FileManager};
 use anyhow::Result;
 
+use crate::{DirectoryManager, FileManager};
+
+#[derive(Clone, Debug)]
 pub struct FileDetail<'a> {
-    file_manager: &'a dyn FileManager,
-    name: &'a str,
-    path: &'a str,
-    len: i64,
+    pub file_manager: &'a dyn FileManager,
+    pub name: String,
+    pub path: String,
+    pub len: u64,
 }
 
 impl FileDetail<'_> {
     pub fn new(file_manager: &dyn FileManager) -> FileDetail {
         FileDetail {
             file_manager,
-            name: "",
-            path: "",
+            name: String::new(),
+            path: String::new(),
             len: 0,
         }
     }
 
     pub fn full_path(&self) -> Result<String> {
         self.file_manager.path_provider().combine(
-            vec![self.name, self.path]
+            vec![&self.name, &self.path]
         )
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct DirectoryDetail<'a> {
-    dir_manager: &'a dyn DirectoryManager,
-    name: &'a str,
-    path: &'a str,
+    pub dir_manager: &'a dyn DirectoryManager,
+    pub name: String,
+    pub path: String,
 }
 
 impl DirectoryDetail<'_> {
     pub fn new(dir_manager: &dyn DirectoryManager) -> DirectoryDetail {
         DirectoryDetail {
             dir_manager,
-            name: "",
-            path: "",
+            name: String::new(),
+            path: String::new(),
         }
     }
 
     pub fn full_path(&self) -> Result<String> {
         self.dir_manager.path_provider().combine(
-            vec![self.name, self.path]
+            vec![&self.name, &self.path]
         )
     }
 }

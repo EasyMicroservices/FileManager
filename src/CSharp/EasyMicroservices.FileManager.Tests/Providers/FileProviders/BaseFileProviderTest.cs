@@ -1,6 +1,7 @@
 ﻿using EasyMicroservices.FileManager.Interfaces;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -8,10 +9,16 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
 {
     public abstract class BaseFileProviderTest
     {
-        IFileManagerProvider _fileManagerProvider;
+        protected readonly IFileManagerProvider _fileManagerProvider;
         public BaseFileProviderTest(IFileManagerProvider fileManagerProvider)
         {
             _fileManagerProvider = fileManagerProvider;
+        }
+
+
+        public virtual Task OnInitialize()
+        {
+            return TaskHelper.GetCompletedTask();
         }
 
         [Theory]
@@ -19,8 +26,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("Mahdi.txt")]
         [InlineData("CreateFile\\Ali.txt")]
         [InlineData("CreateFile\\Mahdi.txt")]
-        public async Task CreateFile(string name)
+        public virtual async Task CreateFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
@@ -37,8 +45,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("Reza.txt")]
         [InlineData("DeleteFile\\Saeed.txt")]
         [InlineData("DeleteFile\\Reza.txt")]
-        public async Task DeleteFile(string name)
+        public virtual async Task DeleteFile(string name)
         {
+            await OnInitialize();
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
             await _fileManagerProvider.CreateFileAsync(name);
             Assert.True(await _fileManagerProvider.IsExistFileAsync(name));
@@ -51,8 +60,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("MahdiTruncate.txt")]
         [InlineData("CreateFile\\AliTruncate.txt")]
         [InlineData("CreateFile\\MahdiTruncate.txt")]
-        public async Task TruncateFile(string name)
+        public virtual async Task TruncateFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
@@ -67,8 +77,9 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
         [InlineData("MahdiStreamWrite.txt")]
         [InlineData("CreateFile\\AliStreamWrite.txt")]
         [InlineData("CreateFile\\MahdiStreamWrite.txt")]
-        public async Task StreamWriteFile(string name)
+        public virtual async Task StreamWriteFile(string name)
         {
+            await OnInitialize();
             if (await _fileManagerProvider.IsExistFileAsync(name))
                 Assert.True(await _fileManagerProvider.DeleteFileAsync(name));
             Assert.False(await _fileManagerProvider.IsExistFileAsync(name));
@@ -85,6 +96,47 @@ namespace EasyMicroservices.FileManager.Tests.Providers.FileProviders
             var readStream = await fileSetails.OpenFileAsync();
 
             await CheckReadStream(readStream, length);
+        }
+
+        [Theory]
+        [InlineData("AliReadWrite.txt")]
+        [InlineData("MahdiReadWrite.txt")]
+        [InlineData("ReadWriteFile\\Ali.txt")]
+        [InlineData("ReadWriteFile\\Mahdi.txt")]
+        public virtual async Task WriteAndReadFile(string name)
+        {
+            await OnInitialize();
+            if (await _fileManagerProvider.IsExistFileAsync(name))
+                await _fileManagerProvider.TruncateFileAsync(name);
+            else
+                await _fileManagerProvider.CreateFileAsync(name);
+            Assert.True(await _fileManagerProvider.IsExistFileAsync(name));
+            string[] lines = new string[]
+            {
+                "line1",
+                "line2"
+            };
+            await _fileManagerProvider.WriteAllLinesAsync(name, lines);
+            var readLines = await _fileManagerProvider.ReadAllLinesAsync(name);
+            Assert.True(lines.SequenceEqual(readLines));
+
+            await _fileManagerProvider.TruncateFileAsync(name);
+            var bytes = new byte[]
+            {
+                1,
+                2,
+                5,
+                7
+            };
+            await _fileManagerProvider.WriteAllBytesAsync(name, bytes);
+            var allBytes = await _fileManagerProvider.ReadAllBytesAsync(name);
+            Assert.True(bytes.SequenceEqual(allBytes));
+
+            await _fileManagerProvider.TruncateFileAsync(name);
+            var text = "My name is ali";
+            await _fileManagerProvider.WriteAllTextAsync(name, text);
+            var readText = await _fileManagerProvider.ReadAllTextAsync(name);
+            Assert.Equal(text, readText);
         }
 
         async Task<Stream> TaskRandomStream(long length)

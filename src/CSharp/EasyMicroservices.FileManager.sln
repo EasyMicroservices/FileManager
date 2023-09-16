@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.AzureStorageBlobs", "EasyMicroservices.FileManager.AzureStorageBlobs\EasyMicroservices.FileManager.AzureStorageBlobs.csproj", "{2B5A2A34-FF28-4364-BF4C-46E08724C5CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.AzureStorageBlobs.Tests", "EasyMicroservices.FileManager.AzureStorageBlobs.Tests\EasyMicroservices.FileManager.AzureStorageBlobs.Tests.csproj", "{FE02A59D-C042-41F0-A723-481C93F5D5ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.Android", "EasyMicroservices.FileManager.Android\EasyMicroservices.FileManager.Android.csproj", "{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMicroservices.FileManager.AndroidTestApp", "EasyMicroservices.FileManager.AndroidTestApp\EasyMicroservices.FileManager.AndroidTestApp.csproj", "{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +94,36 @@ Global
 		{FE02A59D-C042-41F0-A723-481C93F5D5ED}.Release|x64.Build.0 = Release|Any CPU
 		{FE02A59D-C042-41F0-A723-481C93F5D5ED}.Release|x86.ActiveCfg = Release|Any CPU
 		{FE02A59D-C042-41F0-A723-481C93F5D5ED}.Release|x86.Build.0 = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|x64.Build.0 = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Debug|x86.Build.0 = Debug|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|x64.ActiveCfg = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|x64.Build.0 = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|x86.ActiveCfg = Release|Any CPU
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74}.Release|x86.Build.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x64.Build.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x64.Deploy.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x86.Build.0 = Release|Any CPU
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -104,6 +137,8 @@ Global
 		{7C1D905F-7604-4842-9C72-4CF182D7ED83} = {9DA3298D-4E56-449D-8DB2-EAF50B1FC115}
 		{2B5A2A34-FF28-4364-BF4C-46E08724C5CA} = {61FF353A-1041-419B-B9FE-F62B81FBD07F}
 		{FE02A59D-C042-41F0-A723-481C93F5D5ED} = {7C1D905F-7604-4842-9C72-4CF182D7ED83}
+		{98C1E0FF-C28F-40A8-A0CA-87A7F6E37B74} = {61FF353A-1041-419B-B9FE-F62B81FBD07F}
+		{7F63937D-7E1D-4005-91CE-7CD2E4C7D020} = {7C1D905F-7604-4842-9C72-4CF182D7ED83}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3576EC59-EC07-40DF-9149-1C659A5464C3}
